@@ -12,6 +12,7 @@ import memoize from './memoize.js'
 import r from './routes.js'
 import home from './home.js'
 import {renderToString} from 'react-dom/server';
+import evalFunction from './evalFunction'
 
 require('now-logs')(c.apiKey)
 const asciidoctor = require('asciidoctor.js')()
@@ -45,7 +46,10 @@ function* contract(req, res) {
   const hasRights = yield run(checkRights, token)
   if (!hasRights) throw notEnoughRights
 
-  res.send(asciidoctor.convert(yield run(file, token, `${name}.adoc`)))
+  const vars = evalFunction(yield run(file, token, `${name}.js`))()
+  const template = yield run(file, token, `${name}.adoc`)
+
+  res.send(asciidoctor.convert(`${vars}\n${template}`))
 }
 
 const esc = (s) => s.replace('$', '\\$')
