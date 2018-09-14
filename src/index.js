@@ -12,8 +12,10 @@ import memoize from './memoize.js'
 import r from './routes.js'
 import home from './home.js'
 import {renderToString} from 'react-dom/server';
+import testDoc from './test.adoc'
 
 require('now-logs')(c.apiKey)
+const asciidoctor = require('asciidoctor.js')()
 
 const app = express()
 const {register, runApp} = expressHelpers
@@ -34,6 +36,12 @@ function* index(req, res) {
   res.send(renderToString(home()))
 }
 
+function* contract(req, res) {
+  const hasRights = yield run(checkRights, req.cookies.access_token, c.ghRepo)
+  if (!hasRights) throw notEnoughRights
+  res.send(asciidoctor.convert(testDoc))
+}
+
 const esc = (s) => s.replace('$', '\\$')
 
 // Wrapper for web requests to handle exceptions from standard flow.
@@ -49,6 +57,7 @@ const web = (handler) => function* (req, res) {
 register(app, 'get', esc(r.index), web(index))
 register(app, 'get', esc(r.login), web(login))
 register(app, 'get', esc(r.oauth), web(oauth))
+register(app, 'get', esc(r.contract), web(contract))
 
 run(function* () {
   run(runApp)
