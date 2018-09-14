@@ -35,11 +35,11 @@ export function* accessToken(ghClient, code) {
   return (yield authResult.json()).access_token
 }
 
-function* get(token, url) {
+function* get(token, url, customHeaders = {}) {
   if (token == null) throw unauthorized
 
   const response = yield fetch(url, {
-    headers: headers(token),
+    headers: {...headers(token), ...customHeaders},
     method: "GET",
   })
 
@@ -63,4 +63,10 @@ export function* amICollaborator(token, organization, repo) {
 
   // Unsupported HTTP code
   throw new Error(`Github returned unsupported HTTP code ${response.status}.`)
+}
+
+export function* file(token, organization, repo, path) {
+  const url = `${ghApiUrl}/repos/${organization}/${repo}/contents/${path}`
+  const h = {Accept: 'application/vnd.github.v3.raw'}
+  return yield (yield run(get, token, url, h)).text()
 }

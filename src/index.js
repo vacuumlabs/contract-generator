@@ -7,12 +7,11 @@ import c from './config'
 import {sendNotFound, sendNotEnoughRights} from './errorPages.js'
 import {sendToLogin, login, oauth} from './authorize.js'
 import {unauthorized, notFound, notEnoughRights} from './exceptions.js'
-import {amICollaborator as _amICollaborator} from './ghApi.js'
+import {amICollaborator as _amICollaborator, file as _file} from './ghApi.js'
 import memoize from './memoize.js'
 import r from './routes.js'
 import home from './home.js'
 import {renderToString} from 'react-dom/server';
-import testDoc from './test.adoc'
 
 require('now-logs')(c.apiKey)
 const asciidoctor = require('asciidoctor.js')()
@@ -25,21 +24,28 @@ app.use(favicon(path.join(__dirname, '../assets', 'favicon.ico')))
 
 const amICollaborator = memoize(_amICollaborator, c.cacheMaxRecords, c.authorizationMaxAge)
 
-function* checkRights(token, repo) {
-  return repo == null || (yield run(amICollaborator, token,
-                                   c.ghOrganization, repo))
+function* checkRights(token) {
+  return yield run(amICollaborator, token, c.ghOrganization, c.ghRepo)
+}
+
+function* file(token, path) {
+  return yield run(_file, token, c.ghOrganization, c.ghRepo, path)
 }
 
 function* index(req, res) {
-  const hasRights = yield run(checkRights, req.cookies.access_token, c.ghRepo)
+  const hasRights = yield run(checkRights, req.cookies.access_token)
   if (!hasRights) throw notEnoughRights
   res.send(renderToString(home()))
 }
 
 function* contract(req, res) {
-  const hasRights = yield run(checkRights, req.cookies.access_token, c.ghRepo)
+  const token = req.cookies.access_token
+  const name = req.params.name
+
+  const hasRights = yield run(checkRights, token)
   if (!hasRights) throw notEnoughRights
-  res.send(asciidoctor.convert(testDoc))
+
+  res.send(asciidoctor.convert(yield run(file, token, `${name}.adoc`)))
 }
 
 const esc = (s) => s.replace('$', '\\$')
