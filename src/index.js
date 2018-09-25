@@ -46,7 +46,7 @@ function* contract(req, res) {
   const hasRights = yield run(checkRights, token)
   if (!hasRights) throw notEnoughRights
 
-  const vars = evalFunction(yield run(file, token, `${name}.js`))()
+  const vars = evalFunction(yield run(file, token, `${name}.js`))(req.query)
   const template = yield run(file, token, `${name}.adoc`)
 
   res.send(asciidoctor.convert(`${vars}\n${template}`))
