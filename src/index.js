@@ -13,6 +13,7 @@ import r from './routes.js'
 import home from './home.js'
 import {renderToString} from 'react-dom/server';
 import evalFunction from './evalFunction'
+import fetch from 'node-fetch'
 
 require('now-logs')(c.apiKey)
 const asciidoctor = require('asciidoctor.js')()
@@ -24,6 +25,11 @@ app.use(cookieParser())
 app.use(favicon(path.join(__dirname, '../assets', 'favicon.ico')))
 
 const amICollaborator = memoize(_amICollaborator, c.cacheMaxRecords, c.authorizationMaxAge)
+
+function* loadEMS(date) {
+  const url = `https://ems.vacuumlabs.com/api/monthlyExport?apiKey=${c.emsKey}&date=${date}`
+  return yield (yield fetch(url)).json()
+}
 
 function* checkRights(token) {
   return yield run(amICollaborator, token, c.ghOrganization, c.ghRepo)
@@ -46,7 +52,8 @@ function* contract(req, res) {
   const hasRights = yield run(checkRights, token)
   if (!hasRights) throw notEnoughRights
 
-  const vars = evalFunction(yield run(file, token, `${name}.js`))(req.query)
+  const emsData = yield run(loadEMS, req.params.date)
+  const vars = evalFunction(yield run(file, token, `${name}.js`))(req.query, emsData)
   const template = yield run(file, token, `${name}.adoc`)
 
   res.send(asciidoctor.convert(`${vars}\n${template}`))

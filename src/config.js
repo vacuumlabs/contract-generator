@@ -13,5 +13,6 @@ export default transenv()(({str, bool}) => {
     },
     ghOrganization: str('GH_ORGANIZATION'),
     ghRepo: str('GH_REPO'),
+    emsKey: str('EMS_KEY'),
   }
 })

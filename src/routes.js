@@ -2,5 +2,5 @@ export default {
   index: '/',
   login: '/$login',
   oauth: '/$oauth',
-  contract: '/contract/:name',
+  contract: '/contract/:name/:date',
 }
