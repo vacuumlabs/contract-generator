@@ -14,8 +14,8 @@
         "AUTHORIZATION_MAX_AGE": "60000",
         "API_KEY": "IeWj2WEeFL",
 
-        "GH_CLIENT_ID": "@gh-client-id",
-        "GH_CLIENT_SECRET": "@gh-client-secret",
+        "GH_CLIENT_ID": "@gh-contracts-client-id",
+        "GH_CLIENT_SECRET": "@gh-contracts-client-secret",
 
         "GH_ORGANIZATION": "vacuumlabs",
         "GH_REPO": "contracts",
