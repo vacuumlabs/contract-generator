@@ -16,9 +16,15 @@ import evalFunction from './evalFunction'
 import fetch from 'node-fetch'
 
 require('now-logs')(c.apiKey)
-const asciidoctor = require('asciidoctor.js')()
+const asciidoctor = require('asciidoctor.js')({
+  runtime: {
+    platform: 'node',
+  }
+})
 
 const app = express()
+app.use('/assets', express.static('assets'))
+
 const {register, runApp} = expressHelpers
 
 app.use(cookieParser())
@@ -45,6 +51,50 @@ function* index(req, res) {
   res.send(renderToString(home()))
 }
 
+function preprocessTemplate(tmp) {
+  const lines = tmp.split(/\r?\n/)
+
+  let heading = 0
+  let parNumber = []
+  let emptyLine = true
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i]
+    const isNewBlock = emptyLine
+    emptyLine = line.match(/^\s*(\[\[[^\s]+\]\]\s*)?$/g)
+
+    if (!isNewBlock) continue
+
+    if (line.match(/^==/)) {
+      heading++
+      parNumber = []
+      continue
+    }
+
+    if (line.match(/^:sectnums:/)) {
+      heading = 0
+      parNumber = []
+      continue
+    }
+
+    const parRgx = /^(\.+)(\s*\[\[([^\s]+)\]\])?/
+    const numberedP = line.match(parRgx)
+
+    if (!numberedP) continue
+    const level = numberedP[1].length
+
+    parNumber = parNumber.slice(0, level)
+    parNumber[level - 1] = (parNumber[level - 1] || 0) + 1
+
+    const fullNumber = `${heading}.${parNumber.join('.')}`
+
+    const ref = (numberedP[3] != null) ? `[[${numberedP[3]}, ${fullNumber}]]\n` : ''
+
+    lines[i] = line.replace(parRgx, `[horizontal.level${level}]\n${ref}${fullNumber}:${':'.repeat(level)}`)
+  }
+
+  return lines.join('\n')
+}
+
 function* contract(req, res) {
   const token = req.cookies.access_token
   const name = req.params.name
@@ -54,9 +104,9 @@ function* contract(req, res) {
 
   const emsData = yield run(loadEMS, req.params.date)
   const vars = evalFunction(yield run(file, token, `${name}.js`))(req.query, emsData)
-  const template = yield run(file, token, `${name}.adoc`)
+  const template = preprocessTemplate(yield run(file, token, `${name}.adoc`))
 
-  res.send(asciidoctor.convert(`${vars}\n${template}`))
+  res.send(asciidoctor.convert(`${vars}\n${template}`, {header_footer: true, attributes: {stylesheet: '/assets/contract.css'}}))
 }
 
 const esc = (s) => s.replace('$', '\\$')
