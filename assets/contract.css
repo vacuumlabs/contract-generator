@@ -177,7 +177,6 @@ body.toc2.toc-right{padding-left:0;padding-right:20em}}
 @media screen and (min-width:768px){#content{margin-bottom:1.25em}
 .sect1{padding-bottom:1.25em}}
 .sect1:last-child{padding-bottom:0}
-.sect1+.sect1{border-top:1px solid #efefed}
 #content h1>a.anchor,h2>a.anchor,h3>a.anchor,#toctitle>a.anchor,.sidebarblock>.content>.title>a.anchor,h4>a.anchor,h5>a.anchor,h6>a.anchor{position:absolute;z-index:1001;width:1.5ex;margin-left:-1.5ex;display:block;text-decoration:none!important;visibility:hidden;text-align:center;font-weight:400}
 #content h1>a.anchor::before,h2>a.anchor::before,h3>a.anchor::before,#toctitle>a.anchor::before,.sidebarblock>.content>.title>a.anchor::before,h4>a.anchor::before,h5>a.anchor::before,h6>a.anchor::before{content:"\00A7";font-size:.85em;display:block;padding-top:.1em}
 #content h1:hover>a.anchor,#content h1>a.anchor:hover,h2:hover>a.anchor,h2>a.anchor:hover,h3:hover>a.anchor,#toctitle:hover>a.anchor,.sidebarblock>.content>.title:hover>a.anchor,h3>a.anchor:hover,#toctitle>a.anchor:hover,.sidebarblock>.content>.title>a.anchor:hover,h4:hover>a.anchor,h4>a.anchor:hover,h5:hover>a.anchor,h5>a.anchor:hover,h6:hover>a.anchor,h6>a.anchor:hover{visibility:visible}
@@ -442,4 +441,87 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
   table {
     break-inside: avoid;
   }
+}
+
+*{
+	font-family: Arial !important;
+	font-size: 10pt;
+}
+body{
+	background: #fff !important;
+}
+h1, h2, h3{
+	color: #000;
+	font-weight: bold;
+}
+h1{
+	text-align: center;
+	margin-bottom: 20px;
+}
+
+a{
+	color: #000;
+	text-decoration: none;
+}
+
+p{
+	font-size: 10pt !important;
+	margin-bottom: 1rem;
+	margin-block-end: 0.5em;
+	text-align: justify;
+	line-height: 1.5;
+}
+
+.hdlist1{
+	font-size: 12px !important;
+}
+
+.logo{
+	text-align: center;
+}
+
+.logo img{
+	max-width: 20%;
+	margin: 0 auto;
+}
+
+.tableblock{
+	margin-top: 40px;
+}
+
+td>div.verse{
+	white-space: pre-line;
+}
+
+.hdlist>table>tbody>tr, .colist>table>tbody>tr {
+  display: flex;
+  align-items: flex-start;
+}
+
+.hdlist.level1 { margin-left: 1em; }
+
+.hdlist.level2 { margin-left: 3.8em; }
+
+@media print {
+	a {
+		text-decoration: none !important;
+	}
+	a[href]:after {
+		display: none !important;
+		visibility: hidden !important;
+ }
+  h2, h3, h4 {
+    page-break-after: avoid;
+  	}
+	h1 {
+	font-size: 20pt;
+	}
+
+	h2, h3, h4 {
+	font-size: 14pt;
+	margin-top: 25px;
+	}
+
+/** Setting margins */
+@page { margin: 1.75cm }
 }
