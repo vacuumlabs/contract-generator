@@ -525,3 +525,18 @@ td>div.verse{
 /** Setting margins */
 @page { margin: 1.75cm }
 }
+
+#header::before {
+  content: " ";
+  display: block;
+  background-image: url('logo.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 273px;
+  height: 40px;
+  margin: 0 auto 40px;
+}
+
+#header>h1:only-child {
+  border-bottom: 0;
+}
