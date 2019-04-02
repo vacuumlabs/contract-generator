@@ -17,6 +17,5 @@ module.exports = function(what) {
     // object.
     eval(`result = ${what}`)
     return result // eslint-disable-line no-undef
-    } catch (err) {
-  }
+  } catch (err) {}
 }

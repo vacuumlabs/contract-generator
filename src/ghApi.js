@@ -40,7 +40,7 @@ function* get(token, url, customHeaders = {}) {
 
   const response = yield fetch(url, {
     headers: {...headers(token), ...customHeaders},
-    method: "GET",
+    method: 'GET',
   })
 
   if (response.status === 401) throw unauthorized

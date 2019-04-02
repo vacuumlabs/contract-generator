@@ -1,6 +1,7 @@
 import React from 'react'
 export default () => (
-<style>{`
+  <style>
+    {`
 @import url(https://use.fontawesome.com/releases/v5.0.6/css/all.css);
 /*! normalize.css v5.0.0 | MIT License | github.com/necolas/normalize.css */
 html {
@@ -230,4 +231,5 @@ a:hover, a:focus, a:active {
 }
 
 `}
-</style>)
+  </style>
+)

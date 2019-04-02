@@ -1,23 +1,23 @@
 {
-    "alias": ["contract.vacuumlabs.com"],
-    "scale": {
-        "bru1": {
-            "min": 1,
-            "max": 1
-        }
-    },
-    "env": {
-        "NODE_ENV":"production",
-        "HTTPS": "true",
-        "PORT": "443",
-        "AUTHORIZATION_MAX_AGE": "60000",
-
-        "GH_CLIENT_ID": "@gh-contracts-client-id",
-        "GH_CLIENT_SECRET": "@gh-contracts-client-secret",
-
-        "GH_ORGANIZATION": "vacuumlabs",
-        "GH_REPO": "contracts",
-
-        "EMS_KEY": "@ems_key"
+  "alias": ["contract.vacuumlabs.com"],
+  "scale": {
+    "bru1": {
+      "min": 1,
+      "max": 1
     }
+  },
+  "env": {
+    "NODE_ENV": "production",
+    "HTTPS": "true",
+    "PORT": "443",
+    "AUTHORIZATION_MAX_AGE": "60000",
+
+    "GH_CLIENT_ID": "@gh-contracts-client-id",
+    "GH_CLIENT_SECRET": "@gh-contracts-client-secret",
+
+    "GH_ORGANIZATION": "vacuumlabs",
+    "GH_REPO": "contracts",
+
+    "EMS_KEY": "@ems_key"
+  }
 }
