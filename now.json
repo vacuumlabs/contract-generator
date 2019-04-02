@@ -9,10 +9,8 @@
     "env": {
         "NODE_ENV":"production",
         "HTTPS": "true",
-        "HOST": "constract.vacuumlabs.com",
         "PORT": "443",
         "AUTHORIZATION_MAX_AGE": "60000",
-        "API_KEY": "IeWj2WEeFL",
 
         "GH_CLIENT_ID": "@gh-contracts-client-id",
         "GH_CLIENT_SECRET": "@gh-contracts-client-secret",
@@ -20,9 +18,6 @@
         "GH_ORGANIZATION": "vacuumlabs",
         "GH_REPO": "contracts",
 
-        "EMS_KEY": "@ems_key",
-        
-        "jira_authorization": "@jira-export-authorization",
-        "jira_url": "https://api.tempo.io/"
+        "EMS_KEY": "@ems_key"
     }
 }

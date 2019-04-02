@@ -3,7 +3,6 @@ import transenv from 'transenv'
 export default transenv()(({str, bool}) => {
   return {
     isHttps: bool('HTTPS'),
-    apiKey: str('API_KEY'),
     port: str('PORT'),
     authorizationMaxAge: str('AUTHORIZATION_MAX_AGE'),
     cacheMaxRecords: 1000,

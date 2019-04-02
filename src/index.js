@@ -15,7 +15,6 @@ import {renderToString} from 'react-dom/server';
 import evalFunction from './evalFunction'
 import fetch from 'node-fetch'
 
-require('now-logs')(c.apiKey)
 const asciidoctor = require('asciidoctor.js')({
   runtime: {
     platform: 'node',
