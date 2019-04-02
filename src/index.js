@@ -11,14 +11,14 @@ import {amICollaborator as _amICollaborator, file as _file} from './ghApi.js'
 import memoize from './memoize.js'
 import r from './routes.js'
 import home from './home.js'
-import {renderToString} from 'react-dom/server';
+import {renderToString} from 'react-dom/server'
 import evalFunction from './evalFunction'
 import fetch from 'node-fetch'
 
 const asciidoctor = require('asciidoctor.js')({
   runtime: {
     platform: 'node',
-  }
+  },
 })
 
 const app = express()
@@ -29,10 +29,16 @@ const {register, runApp} = expressHelpers
 app.use(cookieParser())
 app.use(favicon(path.join(__dirname, '../assets', 'favicon.ico')))
 
-const amICollaborator = memoize(_amICollaborator, c.cacheMaxRecords, c.authorizationMaxAge)
+const amICollaborator = memoize(
+  _amICollaborator,
+  c.cacheMaxRecords,
+  c.authorizationMaxAge,
+)
 
 function* loadEMS(date) {
-  const url = `https://ems.vacuumlabs.com/api/monthlyExport?apiKey=${c.emsKey}&date=${date}`
+  const url = `https://ems.vacuumlabs.com/api/monthlyExport?apiKey=${
+    c.emsKey
+  }&date=${date}`
   return yield (yield fetch(url)).json()
 }
 
@@ -86,9 +92,13 @@ function preprocessTemplate(tmp) {
 
     const fullNumber = `${heading}.${parNumber.join('.')}`
 
-    const ref = (numberedP[3] != null) ? `[[${numberedP[3]}, ${fullNumber}]]\n` : ''
+    const ref =
+      numberedP[3] != null ? `[[${numberedP[3]}, ${fullNumber}]]\n` : ''
 
-    lines[i] = line.replace(parRgx, `[horizontal.level${level}]\n${ref}${fullNumber}:${':'.repeat(level)}`)
+    lines[i] = line.replace(
+      parRgx,
+      `[horizontal.level${level}]\n${ref}${fullNumber}:${':'.repeat(level)}`,
+    )
   }
 
   return lines.join('\n')
@@ -102,32 +112,39 @@ function* contract(req, res) {
   if (!hasRights) throw notEnoughRights
 
   const emsData = yield run(loadEMS, req.params.date)
-  const vars = evalFunction(yield run(file, token, `${name}.js`))(req.query, emsData)
+  const vars = evalFunction(yield run(file, token, `${name}.js`))(
+    req.query,
+    emsData,
+  )
   const template = preprocessTemplate(yield run(file, token, `${name}.adoc`))
 
-  res.send(asciidoctor.convert(`${vars}\n${template}`, {header_footer: true, attributes: {stylesheet: '/assets/contract.css'}}))
+  res.send(
+    asciidoctor.convert(`${vars}\n${template}`, {
+      header_footer: true,
+      attributes: {stylesheet: '/assets/contract.css'},
+    }),
+  )
 }
 
 const esc = (s) => s.replace('$', '\\$')
 
 // Wrapper for web requests to handle exceptions from standard flow.
-const web = (handler) => function* (req, res) {
-  yield run(handler, req, res).catch((e) => {
-    if (e === notFound) sendNotFound(res)
-    else if (e === unauthorized) sendToLogin(req, res)
-    else if (e === notEnoughRights) sendNotEnoughRights(res)
-    else throw e
-  })
-}
+const web = (handler) =>
+  function*(req, res) {
+    yield run(handler, req, res).catch((e) => {
+      if (e === notFound) sendNotFound(res)
+      else if (e === unauthorized) sendToLogin(req, res)
+      else if (e === notEnoughRights) sendNotEnoughRights(res)
+      else throw e
+    })
+  }
 
 register(app, 'get', esc(r.index), web(index))
 register(app, 'get', esc(r.login), web(login))
 register(app, 'get', esc(r.oauth), web(oauth))
 register(app, 'get', esc(r.contract), web(contract))
 
-run(function* () {
+run(function*() {
   run(runApp)
-  app.listen(c.port, () =>
-    console.log(`App started on localhost:${c.port}.`)
-  )
+  app.listen(c.port, () => console.log(`App started on localhost:${c.port}.`))
 })
