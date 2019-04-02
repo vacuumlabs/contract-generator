@@ -6,7 +6,7 @@
   "author": "Samuel Hapák <samuel.hapak@gmail.com>",
   "license": "Unlicense",
   "scripts": {
-    "start": "babel-node -- src/index.js",
+    "start": "nodemon --exec babel-node -- src/index.js",
     "prettier": "prettier --write src/**/*.js",
     "deploy-now": "now `sed 's/#.*$//;/^\\s*$/d;s/^/-e /' .env.prod`"
   },
@@ -21,6 +21,7 @@
     "fs-promise": "^1.0.0",
     "lodash": "^4.17.2",
     "node-fetch": "^1.6.3",
+    "nodemon": "^1.18.10",
     "npm": "^6.2.0",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
