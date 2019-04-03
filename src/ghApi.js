@@ -68,5 +68,9 @@ export function* amICollaborator(token, organization, repo) {
 export function* file(token, organization, repo, path) {
   const url = `${ghApiUrl}/repos/${organization}/${repo}/contents/${path}`
   const h = {Accept: 'application/vnd.github.v3.raw'}
-  return yield (yield run(get, token, url, h)).text()
+
+  const response = yield run(get, token, url, h)
+  if (response.status === 404) return null
+
+  return yield response.text()
 }
