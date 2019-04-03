@@ -4,7 +4,11 @@ import favicon from 'serve-favicon'
 import {expressHelpers, run} from 'yacol'
 import cookieParser from 'cookie-parser'
 import c from './config'
-import {sendNotFound, sendNotEnoughRights} from './errorPages.js'
+import {
+  sendNotFound,
+  sendNotEnoughRights,
+  sendInvalidInput,
+} from './errorPages.js'
 import {sendToLogin, login, oauth} from './authorize.js'
 import {unauthorized, notFound, notEnoughRights} from './exceptions.js'
 import {amICollaborator as _amICollaborator, file as _file} from './ghApi.js'
@@ -112,18 +116,31 @@ function* contract(req, res) {
   if (!hasRights) throw notEnoughRights
 
   const emsData = yield run(loadEMS, req.params.date)
-  const vars = evalFunction(yield run(file, token, `${name}.js`))(
-    req.query,
-    emsData,
-  )
-  const template = preprocessTemplate(yield run(file, token, `${name}.adoc`))
+  const entity = emsData.find((e) => e.jiraId === req.query.id)
 
-  res.send(
-    asciidoctor.convert(`${vars}\n${template}`, {
-      header_footer: true,
-      attributes: {stylesheet: '/assets/contract.css'},
-    }),
-  )
+  if (!entity) {
+    return sendInvalidInput(res, `Entity with id ${req.query.id} not found`)
+  }
+
+  try {
+    const varsFile = yield run(file, token, `${name}.js`)
+    if (!varsFile) throw new Error(`Could not find ${name}.js`)
+
+    const templateFile = yield run(file, token, `${name}.adoc`)
+    if (!templateFile) throw new Error(`Could not find ${name}.adoc`)
+
+    const vars = evalFunction(varsFile)(req.query, emsData)
+    const template = preprocessTemplate(templateFile)
+
+    res.send(
+      asciidoctor.convert(`${vars}\n${template}`, {
+        header_footer: true,
+        attributes: {stylesheet: '/assets/contract.css'},
+      }),
+    )
+  } catch (e) {
+    return sendInvalidInput(res, `Exception in '${name}': ` + e.toString())
+  }
 }
 
 const esc = (s) => s.replace('$', '\\$')
