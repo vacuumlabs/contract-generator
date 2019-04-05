@@ -10,14 +10,12 @@
     "NODE_ENV": "production",
     "HTTPS": "true",
     "PORT": "443",
-    "AUTHORIZATION_MAX_AGE": "60000",
 
-    "GH_CLIENT_ID": "@gh-contracts-client-id",
-    "GH_CLIENT_SECRET": "@gh-contracts-client-secret",
+    "GH_REPO": "vacuumlabs/contracts",
 
-    "GH_ORGANIZATION": "vacuumlabs",
-    "GH_REPO": "contracts",
+    "EMS_KEY": "@ems_key",
 
-    "EMS_KEY": "@ems_key"
+    "VL_SSO_KEY": "@vl-sso-key",
+    "VL_SSO_URL": "https://sso.vacuumlabs.com"
   }
 }

@@ -1,23 +1,15 @@
 import path from 'path'
 import express from 'express'
 import favicon from 'serve-favicon'
-import {expressHelpers, run} from 'yacol'
 import cookieParser from 'cookie-parser'
 import c from './config'
-import {
-  sendNotFound,
-  sendNotEnoughRights,
-  sendInvalidInput,
-} from './errorPages.js'
-import {sendToLogin, login, oauth} from './authorize.js'
-import {unauthorized, notFound, notEnoughRights} from './exceptions.js'
-import {amICollaborator as _amICollaborator, file as _file} from './ghApi.js'
-import memoize from './memoize.js'
-import r from './routes.js'
+import {sendInvalidInput, sendNotFound} from './errorPages.js'
 import home from './home.js'
 import {renderToString} from 'react-dom/server'
 import evalFunction from './evalFunction'
-import fetch from 'node-fetch'
+import {registerAuthRoutes, authorize, file} from './api'
+import axios from 'axios'
+import {run} from 'yacol'
 
 const asciidoctor = require('asciidoctor.js')({
   runtime: {
@@ -28,35 +20,34 @@ const asciidoctor = require('asciidoctor.js')({
 const app = express()
 app.use('/assets', express.static('assets'))
 
-const {register, runApp} = expressHelpers
+registerAuthRoutes(app)
 
 app.use(cookieParser())
 app.use(favicon(path.join(__dirname, '../assets', 'favicon.ico')))
 
-const amICollaborator = memoize(
-  _amICollaborator,
-  c.cacheMaxRecords,
-  c.authorizationMaxAge,
-)
-
 function* loadEMS(date) {
-  const url = `https://ems.vacuumlabs.com/api/monthlyExport?apiKey=${
-    c.emsKey
-  }&date=${date}`
-  return yield (yield fetch(url)).json()
+  const {data} = yield axios.get(
+    `https://ems.vacuumlabs.com/api/monthlyExport?apiKey=${
+      c.emsKey
+    }&date=${date}`,
+  )
+
+  return data
 }
 
-function* checkRights(token) {
-  return yield run(amICollaborator, token, c.ghOrganization, c.ghRepo)
-}
+app.get('/', authorize, (req, res) => {
+  run(index, req, res)
+})
 
-function* file(token, path) {
-  return yield run(_file, token, c.ghOrganization, c.ghRepo, path)
-}
+app.get('/contract/:name/:date', authorize, async (req, res) => {
+  run(contract, req, res)
+})
+
+app.get('/*', (req, res) => {
+  sendNotFound(res)
+})
 
 function* index(req, res) {
-  const hasRights = yield run(checkRights, req.cookies.access_token)
-  if (!hasRights) throw notEnoughRights
   res.send(renderToString(home()))
 }
 
@@ -114,11 +105,7 @@ function preprocessTemplate(tmp) {
 }
 
 function* contract(req, res) {
-  const token = req.cookies.access_token
   const name = req.params.name
-
-  const hasRights = yield run(checkRights, token)
-  if (!hasRights) throw notEnoughRights
 
   const emsData = yield run(loadEMS, req.params.date)
   const entity = emsData.find((e) => e.jiraId === req.query.id)
@@ -128,11 +115,14 @@ function* contract(req, res) {
   }
 
   try {
-    const varsFile = yield run(file, token, `${name}.js`)
-    if (!varsFile) throw new Error(`Could not find ${name}.js`)
+    const varsFile = yield run(file, req, `${name}.js`).catch((e) =>
+      sendInvalidInput(res, e.toString()),
+    )
+    const templateFile = yield run(file, req, `${name}.adoc`).catch((e) =>
+      sendInvalidInput(res, e.toString()),
+    )
 
-    const templateFile = yield run(file, token, `${name}.adoc`)
-    if (!templateFile) throw new Error(`Could not find ${name}.adoc`)
+    if (!varsFile || !templateFile) return
 
     const vars = evalFunction(varsFile)(req.query, emsData)
     const template = preprocessTemplate(templateFile)
@@ -148,25 +138,4 @@ function* contract(req, res) {
   }
 }
 
-const esc = (s) => s.replace('$', '\\$')
-
-// Wrapper for web requests to handle exceptions from standard flow.
-const web = (handler) =>
-  function*(req, res) {
-    yield run(handler, req, res).catch((e) => {
-      if (e === notFound) sendNotFound(res)
-      else if (e === unauthorized) sendToLogin(req, res)
-      else if (e === notEnoughRights) sendNotEnoughRights(res)
-      else throw e
-    })
-  }
-
-register(app, 'get', esc(r.index), web(index))
-register(app, 'get', esc(r.login), web(login))
-register(app, 'get', esc(r.oauth), web(oauth))
-register(app, 'get', esc(r.contract), web(contract))
-
-run(function*() {
-  run(runApp)
-  app.listen(c.port, () => console.log(`App started on localhost:${c.port}.`))
-})
+app.listen(c.port, () => console.log(`App started on localhost:${c.port}.`))
