@@ -3,7 +3,7 @@ export function sendNotFound(res) {
 }
 
 export function sendNotEnoughRights(res) {
-  res.status(401).send('You do not have rights to access this page.')
+  res.status(403).send('You do not have rights to access this page.')
 }
 
 export function sendInvalidInput(res, message) {
