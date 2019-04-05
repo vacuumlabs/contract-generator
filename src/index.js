@@ -9,7 +9,6 @@ import {renderToString} from 'react-dom/server'
 import evalFunction from './evalFunction'
 import {registerAuthRoutes, authorize, file} from './api'
 import axios from 'axios'
-import {run} from 'yacol'
 
 const asciidoctor = require('asciidoctor.js')({
   runtime: {
@@ -25,31 +24,46 @@ registerAuthRoutes(app)
 app.use(cookieParser())
 app.use(favicon(path.join(__dirname, '../assets', 'favicon.ico')))
 
-function* loadEMS(date) {
-  const {data} = yield axios.get(
+async function loadEMS(date) {
+  return (await axios.get(
     `https://ems.vacuumlabs.com/api/monthlyExport?apiKey=${
       c.emsKey
     }&date=${date}`,
-  )
-
-  return data
+  )).data
 }
 
 app.get('/', authorize, (req, res) => {
-  run(index, req, res)
+  res.send(renderToString(home()))
 })
 
 app.get('/contract/:name/:date', authorize, async (req, res) => {
-  run(contract, req, res)
+  const name = req.params.name
+
+  const emsData = await loadEMS(req.params.date)
+  const entity = emsData.find((e) => e.jiraId === req.query.id)
+
+  if (!entity) {
+    return sendInvalidInput(res, `Entity with id ${req.query.id} not found`)
+  }
+
+  try {
+    const vars = evalFunction(await file(req, `${name}.js`))(req.query, emsData)
+    const template = preprocessTemplate(await file(req, `${name}.adoc`))
+
+    res.send(
+      asciidoctor.convert(`${vars}\n${template}`, {
+        header_footer: true,
+        attributes: {stylesheet: '/assets/contract.css'},
+      }),
+    )
+  } catch (e) {
+    return sendInvalidInput(res, `Exception in '${name}': ` + e.toString())
+  }
 })
 
 app.get('/*', (req, res) => {
   sendNotFound(res)
 })
-
-function* index(req, res) {
-  res.send(renderToString(home()))
-}
 
 function preprocessTemplate(tmp) {
   const lines = tmp.split(/\r?\n/)
@@ -97,40 +111,6 @@ function preprocessTemplate(tmp) {
   }
 
   return lines.join('\n')
-}
-
-function* contract(req, res) {
-  const name = req.params.name
-
-  const emsData = yield run(loadEMS, req.params.date)
-  const entity = emsData.find((e) => e.jiraId === req.query.id)
-
-  if (!entity) {
-    return sendInvalidInput(res, `Entity with id ${req.query.id} not found`)
-  }
-
-  try {
-    const varsFile = yield run(file, req, `${name}.js`).catch((e) =>
-      sendInvalidInput(res, e.toString()),
-    )
-    const templateFile = yield run(file, req, `${name}.adoc`).catch((e) =>
-      sendInvalidInput(res, e.toString()),
-    )
-
-    if (!varsFile || !templateFile) return
-
-    const vars = evalFunction(varsFile)(req.query, emsData)
-    const template = preprocessTemplate(templateFile)
-
-    res.send(
-      asciidoctor.convert(`${vars}\n${template}`, {
-        header_footer: true,
-        attributes: {stylesheet: '/assets/contract.css'},
-      }),
-    )
-  } catch (e) {
-    return sendInvalidInput(res, `Exception in '${name}': ` + e.toString())
-  }
 }
 
 app.listen(c.port, () => console.log(`App started on localhost:${c.port}.`))
