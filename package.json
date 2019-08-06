@@ -19,7 +19,7 @@
     "cookie-parser": "^1.4.3",
     "express": "^4.14.0",
     "fs-promise": "^1.0.0",
-    "lodash": "^4.17.2",
+    "lodash": "^4.17.13",
     "node-fetch": "^1.6.3",
     "nodemon": "^1.18.10",
     "npm": "^6.2.0",
