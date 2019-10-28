@@ -1,11 +1,27 @@
 {
   "alias": ["contract.vacuumlabs.com"],
-  "scale": {
-    "bru1": {
-      "min": 1,
-      "max": 1
-    }
-  },
+  "regions": ["bru"],
+  "version": 2,
+  "builds": [
+    {"src": "assets/*", "use": "@now/static"},
+    {
+      "src": "src/contract.js",
+      "use": "@now/node",
+      "config": {"maxLambdaSize": "40mb"}
+    },
+    {"src": "src/auth/*.js", "use": "@now/node"},
+    {"src": "src/*.js", "use": "@now/node"}
+  ],
+  "routes": [
+    {"src": "/assets/contract.css", "dest": "/assets/contract.css"},
+    {"src": "/assets/app.css", "dest": "/assets/app.css"},
+    {"src": "/favicon.ico", "dest": "/assets/favicon.ico"},
+    {"src": "/assets/logo.png", "dest": "/assets/logo.png"},
+    {"src": "/login", "dest": "/src/auth/login.js"},
+    {"src": "/callback", "dest": "/src/auth/callback.js"},
+    {"src": "/contract/(.+)/(.+)", "dest": "/src/contract.js"},
+    {"src": "/(.*)", "dest": "/src/home.js"}
+  ],
   "env": {
     "NODE_ENV": "production",
     "HTTPS": "true",
