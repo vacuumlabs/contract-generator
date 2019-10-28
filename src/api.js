@@ -1,7 +1,5 @@
 import axios from 'axios'
-import qs from 'querystring'
 import c from './config'
-import url from 'url'
 import {sendNotEnoughRights} from './errorPages'
 
 const config = (req) => {
@@ -29,9 +27,22 @@ export const file = async (req, filename) => {
   }
 }
 
-export const authorize = async (req, res, next) => {
+export const loadEMS = async (date) =>
+  (await axios.get(
+    `https://ems.vacuumlabs.com/api/monthlyExport?apiKey=${
+      c.emsKey
+    }&date=${date}`,
+  )).data
+
+export const redirect = (res, path) => {
+  res.statusCode = 302
+  res.setHeader('Location', path)
+  res.end()
+}
+
+export const authorize = async (req, res) => {
   if (!req.cookies.authToken) {
-    res.redirect('/auth/login')
+    redirect(res, '/login')
     return
   }
 
@@ -48,32 +59,11 @@ export const authorize = async (req, res, next) => {
     }
   } catch (e) {
     if (e.response.status === 401) {
-      res.redirect('/auth/login')
+      redirect(res, '/login')
       return
     } else {
       throw e
     }
   }
-
-  next()
-}
-
-export const registerAuthRoutes = (app) => {
-  app.get('/auth/login', (req, res) => {
-    const oauthUrl = url.format({
-      protocol: req.protocol,
-      host: req.headers.host,
-      pathname: '/auth/callback',
-    })
-    res.redirect(`${c.ssoUrl}/$login?${qs.stringify({url: oauthUrl})}`)
-  })
-
-  app.get('/auth/callback', (req, res) => {
-    res.cookie('authToken', req.query.code, {
-      httpOnly: true,
-      secure: c.isHttps,
-    })
-
-    res.redirect('/')
-  })
+  return true
 }

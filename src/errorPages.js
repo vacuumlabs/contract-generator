@@ -1,11 +1,9 @@
-export function sendNotFound(res) {
-  res.status(404).send('Page Not Found')
+export const sendNotEnoughRights = (res) => {
+  res.statusCode = 403
+  res.send('You do not have rights to access this page.')
 }
 
-export function sendNotEnoughRights(res) {
-  res.status(403).send('You do not have rights to access this page.')
-}
-
-export function sendInvalidInput(res, message) {
-  res.status(400).send(message)
+export const sendInvalidInput = (res, message) => {
+  res.statusCode = 400
+  res.send(message)
 }

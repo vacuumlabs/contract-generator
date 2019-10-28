@@ -6,30 +6,27 @@
   "author": "Samuel Hapák <samuel.hapak@gmail.com>",
   "license": "Unlicense",
   "scripts": {
-    "start": "nodemon --exec babel-node -- src/index.js",
+    "start": "now dev",
     "prettier": "prettier --write src/**/*.js",
     "deploy-now": "now `sed 's/#.*$//;/^\\s*$/d;s/^/-e /' .env.prod`"
   },
   "dependencies": {
     "asciidoctor.js": "^1.5.7-rc.1",
     "axios": "^0.18.0",
-    "babel-cli": "^6.18.0",
-    "babel-plugin-transform-react-jsx": "^6.23.0",
-    "babel-preset-node6": "^11.0.0",
-    "babel-preset-stage-0": "^6.16.0",
+    "chrome-aws-lambda": "^2.0.0",
     "cookie-parser": "^1.4.3",
-    "express": "^4.14.0",
-    "fs-promise": "^1.0.0",
     "lodash": "^4.17.2",
     "nodemon": "^1.18.10",
     "npm": "^6.2.0",
-    "react": "^15.4.2",
-    "react-dom": "^15.4.2",
-    "serve-favicon": "^2.5.0",
-    "transenv": "^1.0.3"
+    "puppeteer-core": "^2.0.0",
+    "transenv": "^1.0.3",
+    "xmlhttprequest": "^1.8.0"
   },
   "peerDependencies": {},
   "devDependencies": {
     "prettier": "prettier/prettier"
+  },
+  "engines": {
+    "node": ">=8.16.0"
   }
 }
