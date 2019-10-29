@@ -85,6 +85,11 @@ function preprocessTemplate(tmp) {
       continue
     }
 
+    if (line.match(/^ifeval::/) || line.match(/^ifdef::/)) {
+      emptyLine = true
+      continue
+    }
+
     const parRgx = /^(\.+)(\s*\[\[([^\s]+)\]\])?/
     const numberedP = line.match(parRgx)
 
