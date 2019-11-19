@@ -1,30 +1,19 @@
 import {authorize, loadEMS} from './api'
-import {sendInvalidInput, sendNotEnoughRights} from './errorPages'
-import {createHtml, htmlToPdf, getCssUrl, getParams} from './utils'
+import {getIds, getParams} from './utils/parsing'
+import {withErrorHandling} from './utils/withErrorHandling'
+import {sendContracts} from './utils/sendContracts'
+import {createPdfContracts} from './utils/createPdfContracts'
 
-export default async (req, res) => {
+const contract = async (req, res) => {
   if (!(await authorize(req, res))) return
 
-  const {name, date} = getParams(req)
-
+  const {fileName, date} = getParams(req)
   const emsData = await loadEMS(date)
-  if (!emsData) return sendNotEnoughRights(res)
+  const ids = getIds(req, emsData)
 
-  const entity = emsData.find((e) => e.jiraId === req.query.id)
+  const contracts = await createPdfContracts(req, ids, fileName, emsData)
 
-  if (!entity) {
-    return sendInvalidInput(res, `Entity with id ${req.query.id} not found`)
-  }
-
-  try {
-    const html = await createHtml(req, name, emsData)
-    const cssUrl = getCssUrl(req)
-
-    const pdf = await htmlToPdf(html, cssUrl)
-
-    res.setHeader('Content-Type', `application/pdf`)
-    res.send(pdf)
-  } catch (e) {
-    return sendInvalidInput(res, `Exception in '${name}': ` + e.toString())
-  }
+  return sendContracts(res, ids, contracts)
 }
+
+export default withErrorHandling(contract)
