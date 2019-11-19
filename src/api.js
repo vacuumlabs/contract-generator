@@ -1,6 +1,6 @@
 import axios from 'axios'
 import c from './config'
-import {sendNotEnoughRights} from './errorPages'
+import {sendNotEnoughRights, notEnoughRightsMessage} from './errorPages'
 
 const config = (req) => {
   return {
@@ -27,17 +27,23 @@ export const file = async (req, filename) => {
   }
 }
 
-export const loadEMS = async (date) =>
-  (await axios.get(
-    `https://ems.vacuumlabs.com/api/monthlyExport?apiKey=${
-      c.emsKey
-    }&date=${date}`,
-  )).data
+export const loadEMS = async (date) => {
+  const emsData = (
+    await axios.get(
+      `https://ems.vacuumlabs.com/api/monthlyExport?apiKey=${c.emsKey}&date=${date}`,
+    )
+  ).data
+
+  if (!emsData) {
+    throw notEnoughRightsMessage
+  }
+
+  return emsData
+}
 
 export const redirect = (res, path) => {
-  res.statusCode = 302
   res.setHeader('Location', path)
-  res.end()
+  res.status(302).end()
 }
 
 export const authorize = async (req, res) => {

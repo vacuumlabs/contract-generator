@@ -10,7 +10,7 @@
       "config": {"maxLambdaSize": "40mb"}
     },
     {"src": "src/auth/*.js", "use": "@now/node"},
-    {"src": "src/*.js", "use": "@now/node"}
+    {"src": "src/home.js", "use": "@now/node"}
   ],
   "routes": [
     {"src": "/assets/contract.css", "dest": "/assets/contract.css"},
