@@ -1,9 +1,9 @@
-import _ from 'lodash'
 import _asciidoctor from 'asciidoctor.js'
 import {file} from '../api'
 import evalFunction from '../evalFunction'
 import {preprocessTemplate} from './preprocessTemplate'
 import {getSigningDates, shouldRemovePandadocTags} from './parsing'
+import {objToAdocVars} from './objToAdocVars'
 
 const asciidoctor = _asciidoctor()
 
@@ -28,8 +28,9 @@ export const createHtmlContracts = async (
       signing_date: signingDates[i],
     }
     const vars = evalFunction(templateFunction)(query, emsData)
+    const adocVars = objToAdocVars(vars, person.jiraId)
 
-    return asciidoctor.convert(`${vars}\n${template}`, {
+    return asciidoctor.convert(`${adocVars}\n${template}`, {
       header_footer: true,
     })
   })
