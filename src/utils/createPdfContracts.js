@@ -8,7 +8,11 @@ const pdfOptions = {
   printBackground: true,
   displayHeaderFooter: true,
   headerTemplate: '<div/>',
-  footerTemplate: '<div/>',
+  footerTemplate: `
+    <div class='grow'></div>
+    <div class='text right'>
+      <span class='pageNumber'></span>/<span class='totalPages'></span>
+    </div>`,
 }
 
 const addCss = (html, cssUrl) => {
