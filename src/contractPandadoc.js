@@ -1,10 +1,11 @@
 import {authorize, loadEMS} from './api'
 import {getPeople, getParams} from './utils/parsing'
 import {withErrorHandling} from './utils/withErrorHandling'
-import {sendContracts} from './utils/sendContracts'
 import {createPdfContracts} from './utils/createPdfContracts'
+import {emailContracts} from './pandadoc'
+import {sendEmailResponses} from './utils/sendEmailResponses'
 
-const contract = async (req, res) => {
+const contractPandadoc = async (req, res) => {
   if (!(await authorize(req, res))) return
 
   const {contractName, date} = getParams(req)
@@ -13,7 +14,9 @@ const contract = async (req, res) => {
 
   const contracts = await createPdfContracts(req, people, contractName, emsData)
 
-  return sendContracts(res, people, contracts)
+  const responses = await emailContracts(req, contracts, people, contractName)
+
+  return sendEmailResponses(res, responses)
 }
 
-export default withErrorHandling(contract)
+export default withErrorHandling(contractPandadoc)

@@ -1,4 +1,4 @@
-export const preprocessTemplate = (tmp) => {
+export const preprocessTemplate = (tmp, removePandadocTags) => {
   const lines = tmp.split(/\r?\n/)
 
   let heading = 0
@@ -48,5 +48,9 @@ export const preprocessTemplate = (tmp) => {
     )
   }
 
-  return lines.join('\n')
+  let res = lines.join('\n')
+
+  return removePandadocTags
+    ? res.replace(/\n\s?{signature:\w+}\s?\n/g, '\n')
+    : res
 }

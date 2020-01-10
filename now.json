@@ -9,6 +9,11 @@
       "use": "@now/node",
       "config": {"maxLambdaSize": "40mb"}
     },
+    {
+      "src": "src/contractPandadoc.js",
+      "use": "@now/node",
+      "config": {"maxLambdaSize": "40mb"}
+    },
     {"src": "src/auth/*.js", "use": "@now/node"},
     {"src": "src/home.js", "use": "@now/node"}
   ],
@@ -20,6 +25,7 @@
     {"src": "/login", "dest": "/src/auth/login.js"},
     {"src": "/callback", "dest": "/src/auth/callback.js"},
     {"src": "/contract/(.+)/(.+)", "dest": "/src/contract.js"},
+    {"src": "/contractPandadoc/(.+)/(.+)", "dest": "/src/contractPandadoc.js"},
     {"src": "/(.*)", "dest": "/src/home.js"}
   ],
   "env": {
@@ -32,6 +38,8 @@
     "EMS_KEY": "@ems_key",
 
     "VL_SSO_KEY": "@vl-sso-key",
-    "VL_SSO_URL": "https://sso.vacuumlabs.com"
+    "VL_SSO_URL": "https://sso.vacuumlabs.com",
+
+    "PANDADOC_KEY": "@pandadoc-api-key"
   }
 }

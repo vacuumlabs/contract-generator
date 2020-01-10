@@ -1,12 +1,12 @@
 import archiver from 'archiver'
 
-const createZip = async (contracts, ids) => {
+const createZip = async (contracts, people) => {
   const zip = archiver('zip', {
     zlib: {level: 9},
   })
 
   contracts.forEach((contract, i) => {
-    zip.append(contract, {name: `${ids[i]}.pdf`})
+    zip.append(contract, {name: `${people[i].jiraId}.pdf`})
   })
 
   const finishZipping = new Promise((res, rej) =>
@@ -23,17 +23,17 @@ const sendSingleContract = (res, contract) => {
   return res.send(contract)
 }
 
-const zipAndSendContracts = async (res, ids, contracts) => {
-  const zippedContracts = await createZip(contracts, ids)
+const zipAndSendContracts = async (res, people, contracts) => {
+  const zippedContracts = await createZip(contracts, people)
 
   res.setHeader('Content-Type', `application/zip`)
   return res.send(zippedContracts)
 }
 
-export const sendContracts = async (res, ids, contracts) => {
+export const sendContracts = async (res, people, contracts) => {
   if (contracts.length === 1) {
     return sendSingleContract(res, contracts[0])
   }
 
-  return await zipAndSendContracts(res, ids, contracts)
+  return await zipAndSendContracts(res, people, contracts)
 }

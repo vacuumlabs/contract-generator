@@ -3,18 +3,30 @@ import _asciidoctor from 'asciidoctor.js'
 import {file} from '../api'
 import evalFunction from '../evalFunction'
 import {preprocessTemplate} from './preprocessTemplate'
-import {getSigningDates} from './parsing'
+import {getSigningDates, shouldRemovePandadocTags} from './parsing'
 
 const asciidoctor = _asciidoctor()
 
-export const createHtmlContracts = async (req, ids, name, emsData) => {
-  const template = preprocessTemplate(await file(req, `${name}.adoc`))
-  const templateFunction = await file(req, `${name}.js`)
+export const createHtmlContracts = async (
+  req,
+  people,
+  contractName,
+  emsData,
+) => {
+  const template = preprocessTemplate(
+    await file(req, `${contractName}.adoc`),
+    shouldRemovePandadocTags(req),
+  )
+  const templateFunction = await file(req, `${contractName}.js`)
 
   const signingDates = getSigningDates(req)
 
-  const htmlContracts = ids.map((id, i) => {
-    const query = {...req.query, id, signing_date: signingDates[i]}
+  const htmlContracts = people.map((person, i) => {
+    const query = {
+      ...req.query,
+      id: person.jiraId,
+      signing_date: signingDates[i],
+    }
     const vars = evalFunction(templateFunction)(query, emsData)
 
     return asciidoctor.convert(`${vars}\n${template}`, {

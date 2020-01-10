@@ -47,8 +47,13 @@ const htmlsToPdfs = async (htmls, cssUrl) => {
   return pdfs
 }
 
-export const createPdfContracts = async (req, ids, name, emsData) => {
-  const htmls = await createHtmlContracts(req, ids, name, emsData)
+export const createPdfContracts = async (
+  req,
+  people,
+  contractName,
+  emsData,
+) => {
+  const htmls = await createHtmlContracts(req, people, contractName, emsData)
 
   const cssUrl = getCssUrl(req)
   return htmlsToPdfs(htmls, cssUrl)

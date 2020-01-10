@@ -11,29 +11,29 @@ export const getCssUrl = (req) =>
 
 export const getParams = (req) => {
   const params = req.url.split('/').slice(2)
-  const fileName = params[0]
+  const contractName = params[0]
   const date = params[1].split('?')[0]
-  return {fileName, date}
+  return {contractName, date}
 }
 
-const validateIds = (ids, emsData) => {
-  if (_.isEmpty(ids)) {
-    throw 'No entity id specified.'
-  }
+const validatePeople = (people, ids) => {
+  const missingIds = people
+    .map((person, i) => !person && ids[i])
+    .filter((id) => !!id)
 
-  const missingEntities = ids.filter(
-    (id) => !emsData.find((e) => e.jiraId === id),
-  )
-  if (!_.isEmpty(missingEntities)) {
+  if (!_.isEmpty(missingIds)) {
     throw 'Process stopped because some ids were not found:<br>' +
-      missingEntities.join('<br>')
+      missingIds.join('<br>')
   }
 }
 
-export const getIds = (req, emsData) => {
+export const getPeople = (req, emsData) => {
   const ids = req.query.id.split(',')
-  validateIds(ids, emsData)
-  return ids
+
+  const people = ids.map((id) => emsData.find((e) => e.jiraId === id))
+  validatePeople(people, ids)
+
+  return people
 }
 
 export const getSigningDates = (req) => {
@@ -44,4 +44,13 @@ export const getSigningDates = (req) => {
   const filledDates = dates.map((date) => date || dates[0])
 
   return filledDates
+}
+
+export const shouldRemovePandadocTags = (req) => {
+  const endpoint = req.url.split('/')[1]
+  return endpoint.match(/pandadoc/gi) ? false : true
+}
+
+export const shouldEmailCompany = (req) => {
+  return !!req.query.sendEmailToCompany
 }
