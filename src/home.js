@@ -1,20 +1,20 @@
-import React from 'react'
-import Style from './app.style'
+import {authorize} from './api'
 
-export default () => (
+const title = 'Contract Generator'
+
+export default async (req, res) => {
+  if (!(await authorize(req, res))) return
+  res.send(`
   <div>
-    <Style />
+    <link rel="stylesheet" href="/assets/app.css">
     <div className="line" />
     <div className="wrapper">
-      <Header />
+      <header className="header">
+        <a href="/" className="header__logo" title="${title}">
+          ${title}
+        </a>
+      </header>
     </div>
   </div>
-)
-
-const Header = ({title = 'Contract Generator'}) => (
-  <header className="header">
-    <a href="/" className="header__logo" title={title}>
-      {title}
-    </a>
-  </header>
-)
+   `)
+}
