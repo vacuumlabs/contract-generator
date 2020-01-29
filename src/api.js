@@ -35,7 +35,7 @@ export const loadEMS = async (date) => {
   ).data
 
   if (!emsData) {
-    throw notEnoughRightsMessage
+    throw 'You do noth have rights to ems' //notEnoughRightsMessage
   }
 
   return emsData
@@ -60,7 +60,8 @@ export const authorize = async (req, res) => {
 
     const isAuthorized = userRepos.some((x) => x.full_name === c.ghRepo)
     if (!isAuthorized) {
-      sendNotEnoughRights(res)
+      res.send('You do not have rights to contracts github repository')
+      //sendNotEnoughRights(res)
       return
     }
   } catch (e) {
