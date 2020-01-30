@@ -53,23 +53,23 @@ export const authorize = async (req, res) => {
   }
 
   try {
-    const {data: userRepos} = await axios.get(
-      `${c.ghApiUrl}/user/repos`,
+    const response = await axios.get(
+      `${c.ghApiUrl}/repos/${c.ghRepo}`,
       config(req),
     )
-
-    const isAuthorized = userRepos.some((x) => x.full_name === c.ghRepo)
-    if (!isAuthorized) {
-      sendNotEnoughRights(res)
-      return
+    if (response.status === 200) {
+      return true
     }
   } catch (e) {
-    if (e.response.status === 401) {
+    if (e && e.response && e.response.status === 404) {
+      return sendNotEnoughRights(res)
+    }
+    if (e && e.response && e.response.status === 401) {
       redirect(res, '/login')
       return
     } else {
       throw e
     }
   }
-  return true
+  return sendNotEnoughRights(res)
 }
