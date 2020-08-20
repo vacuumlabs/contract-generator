@@ -12,6 +12,7 @@ export const createHtmlContracts = async (
   people,
   contractName,
   emsData,
+  sheetsData,
 ) => {
   const template = preprocessTemplate(
     await file(req, `${contractName}.adoc`),
@@ -26,8 +27,11 @@ export const createHtmlContracts = async (
       ...req.query,
       id: person.jiraId,
       signing_date: signingDates[i],
+      sheetsData,
     }
+
     const vars = evalFunction(templateFunction)(query, emsData)
+
     const adocVars = objToAdocVars(vars, person.jiraId)
 
     return asciidoctor.convert(`${adocVars}\n${template}`, {

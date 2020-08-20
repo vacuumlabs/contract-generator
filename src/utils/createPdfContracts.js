@@ -52,8 +52,15 @@ export const createPdfContracts = async (
   people,
   contractName,
   emsData,
+  sheetsData,
 ) => {
-  const htmls = await createHtmlContracts(req, people, contractName, emsData)
+  const htmls = await createHtmlContracts(
+    req,
+    people,
+    contractName,
+    emsData,
+    sheetsData,
+  )
 
   const cssUrl = getCssUrl(req)
   return htmlsToPdfs(htmls, cssUrl)
