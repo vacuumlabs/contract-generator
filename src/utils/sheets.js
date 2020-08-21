@@ -6,25 +6,21 @@ const sheets = {
     spreadsheetId: c.google.spreadsheetId,
     sheetId: 0,
     range: 'Sheet1',
+    idSheetsColumn: 'Email', // google sheet column name
+    idEMSField: 'emailVL', // EMS field to be joined on
   },
 }
 
 const scopes = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 const key = Buffer.from(c.google.key, 'base64').toString()
-const auth = new google.auth.JWT(c.google.email, null, c.google.key, scopes)
-const sheetsApi = google.sheets({version: 'v4', auth: c.google.key})
+const auth = new google.auth.JWT(c.google.email, null, key, scopes)
+const sheetsApi = google.sheets({version: 'v4', auth})
 
-// How are EMS data and google sheets data joined
-const idSheetsColumn = 'Email' // google sheet column name
-const idEMSField = 'emailVL'
+export const loadSheetData = async (people, sheet=sheets.shareTable) => {
+  const personIDs = people.map((person) => person[sheet.idEMSField])
 
-export const loadSheetData = async (people) => {
-  const sheet = sheets.shareTable
-  const personIDs = people.map((person) => person[idEMSField])
-
-  console.log('sheets_2a')
   let [header, ...values] = await getValues(sheet.spreadsheetId, sheet.range)
-  console.log('sheets_2b')
+
   try {
     values = values
       .map((row) => {
@@ -34,11 +30,10 @@ export const loadSheetData = async (people) => {
         })
         return obj
       })
-      .filter((row) => personIDs.includes(row[idSheetsColumn]))
+      .filter((row) => personIDs.includes(row[sheet.idSheetsColumn]))
   } catch (error) {
-    console.log(error)
+    console.log(`Error loading Google Sheet ID ${sheet.spreadsheetId}:\n ${error}`)
   }
-  console.log('sheets_3')
   return values
 }
 
