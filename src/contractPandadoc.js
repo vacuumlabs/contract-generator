@@ -4,6 +4,7 @@ import {withErrorHandling} from './utils/withErrorHandling'
 import {createPdfContracts} from './utils/createPdfContracts'
 import {emailContracts} from './pandadoc'
 import {sendEmailResponses} from './utils/sendEmailResponses'
+import {loadSheetData} from './utils/sheets'
 
 const contractPandadoc = async (req, res) => {
   if (!(await authorize(req, res))) return
@@ -12,7 +13,15 @@ const contractPandadoc = async (req, res) => {
   const emsData = await loadEMS(date)
   const people = getPeople(req, emsData)
 
-  const contracts = await createPdfContracts(req, people, contractName, emsData)
+  const loadSheetDataCallback = (sheet) => loadSheetData(people, sheet)
+
+  const contracts = await createPdfContracts(
+    req,
+    people,
+    contractName,
+    emsData,
+    loadSheetDataCallback,
+  )
 
   const responses = await emailContracts(req, contracts, people, contractName)
 

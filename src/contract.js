@@ -12,18 +12,14 @@ const contract = async (req, res) => {
   const emsData = await loadEMS(date)
   const people = getPeople(req, emsData)
 
-  console.log('BEFORE')
-  const sheetsData = await loadSheetData(people)
-  console.log('RUN ON SHEET DATA FINISHED.')
-  console.log(sheetsData)
-  console.log('AFTER')
+  const loadSheetDataCallback = (sheet) => loadSheetData(people, sheet)
 
   const contracts = await createPdfContracts(
     req,
     people,
     contractName,
     emsData,
-    sheetsData,
+    loadSheetDataCallback,
   )
   return sendContracts(res, people, contracts)
 }

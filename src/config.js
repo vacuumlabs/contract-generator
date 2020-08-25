@@ -12,7 +12,6 @@ export default transenv()(({str, bool}) => {
     pandadocKey: str('PANDADOC_KEY'),
 
     google: {
-      spreadsheetId: '1CTecghNxMqLInsCIPtAOBaOgx_e-JgUcj3kliepuqkA',
       email: str('GOOGLE_EMAIL'),
       key: str('GOOGLE_KEY'),
     },

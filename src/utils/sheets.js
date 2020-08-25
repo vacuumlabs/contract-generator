@@ -1,39 +1,36 @@
 import c from '../config'
 import {google} from 'googleapis'
 
-const sheets = {
-  shareTable: {
-    spreadsheetId: c.google.spreadsheetId,
-    sheetId: 0,
-    range: 'Sheet1',
-    idSheetsColumn: 'Email', // google sheet column name
-    idEMSField: 'emailVL', // EMS field to be joined on
-  },
-}
-
+// Authentication
+// Google Sheet must give read permission to the service account in c.google.email
 const scopes = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 const key = Buffer.from(c.google.key, 'base64').toString()
 const auth = new google.auth.JWT(c.google.email, null, key, scopes)
 const sheetsApi = google.sheets({version: 'v4', auth})
 
-export const loadSheetData = async (people, sheet=sheets.shareTable) => {
+/**
+ * Loads data from Google Sheets
+ * Returns an array of objects (rows) indexed by column headers (first row) 
+ * Called from contract template
+ * @param {*} people
+ * @param {spreadsheetId, sheetId, range, idSheetsColumn, idEMSField} sheet: Google sheet and range identifier, fields to join with EMS
+ */
+export const loadSheetData = async (people, sheet) => {
   const personIDs = people.map((person) => person[sheet.idEMSField])
 
   let [header, ...values] = await getValues(sheet.spreadsheetId, sheet.range)
 
-  try {
-    values = values
-      .map((row) => {
-        let obj = {}
-        header.forEach((key, col) => {
-          obj[key] = row[col]
-        })
-        return obj
+  // Index by column headers,
+  // filter rows in the array people - from the original request
+  values = values
+    .map((row) => {
+      let obj = {}
+      header.forEach((key, col) => {
+        obj[key] = row[col]
       })
-      .filter((row) => personIDs.includes(row[sheet.idSheetsColumn]))
-  } catch (error) {
-    console.log(`Error loading Google Sheet ID ${sheet.spreadsheetId}:\n ${error}`)
-  }
+      return obj
+    })
+    .filter((row) => personIDs.includes(row[sheet.idSheetsColumn]))
   return values
 }
 
@@ -41,8 +38,8 @@ const getValues = async (spreadsheetId, range) => {
   return (
     (
       await sheetsApi.spreadsheets.values.get({
-        spreadsheetId: spreadsheetId,
-        valueRenderOption: 'UNFORMATTED_VALUE',
+        spreadsheetId,
+        valueRenderOption: 'UNFORMATTED_VALUE', // each cell returns a string
         range,
       })
     ).data.values || []
