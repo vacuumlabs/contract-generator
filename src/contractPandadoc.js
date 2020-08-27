@@ -12,7 +12,12 @@ const contractPandadoc = async (req, res) => {
   const emsData = await loadEMS(date)
   const people = getPeople(req, emsData)
 
-  const contracts = await createPdfContracts(req, people, contractName, emsData)
+  const contracts = await createPdfContracts(
+    req,
+    people,
+    contractName,
+    emsData,
+  )
 
   const responses = await emailContracts(req, contracts, people, contractName)
 

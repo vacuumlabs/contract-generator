@@ -4,6 +4,7 @@ import evalFunction from '../evalFunction'
 import {preprocessTemplate} from './preprocessTemplate'
 import {getSigningDates, shouldRemovePandadocTags} from './parsing'
 import {objToAdocVars} from './objToAdocVars'
+import {loadSheetData} from './sheets'
 
 const asciidoctor = _asciidoctor()
 
@@ -21,19 +22,26 @@ export const createHtmlContracts = async (
 
   const signingDates = getSigningDates(req)
 
-  const htmlContracts = people.map((person, i) => {
-    const query = {
-      ...req.query,
-      id: person.jiraId,
-      signing_date: signingDates[i],
-    }
-    const vars = evalFunction(templateFunction)(query, emsData)
-    const adocVars = objToAdocVars(vars, person.jiraId)
+  const loadSheetDataCallback = (sheet) => loadSheetData(people, sheet)
 
-    return asciidoctor.convert(`${adocVars}\n${template}`, {
-      header_footer: true,
-    })
-  })
+  const htmlContracts = await Promise.all(
+    people.map(async (person, i) => {
+      const query = {
+        ...req.query,
+        id: person.jiraId,
+        signing_date: signingDates[i],
+        loadSheetDataCallback,
+      }
+
+      const vars = await evalFunction(templateFunction)(query, emsData)
+
+      const adocVars = objToAdocVars(vars, person.jiraId)
+
+      return asciidoctor.convert(`${adocVars}\n${template}`, {
+        header_footer: true,
+      })
+    }),
+  )
 
   return htmlContracts
 }

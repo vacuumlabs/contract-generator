@@ -11,8 +11,12 @@ const contract = async (req, res) => {
   const emsData = await loadEMS(date)
   const people = getPeople(req, emsData)
 
-  const contracts = await createPdfContracts(req, people, contractName, emsData)
-
+  const contracts = await createPdfContracts(
+    req,
+    people,
+    contractName,
+    emsData,
+  )
   return sendContracts(res, people, contracts)
 }
 
