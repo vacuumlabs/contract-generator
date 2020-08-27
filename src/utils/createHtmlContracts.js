@@ -4,6 +4,7 @@ import evalFunction from '../evalFunction'
 import {preprocessTemplate} from './preprocessTemplate'
 import {getSigningDates, shouldRemovePandadocTags} from './parsing'
 import {objToAdocVars} from './objToAdocVars'
+import {loadSheetData} from './sheets'
 
 const asciidoctor = _asciidoctor()
 
@@ -12,7 +13,6 @@ export const createHtmlContracts = async (
   people,
   contractName,
   emsData,
-  loadSheetDataCallback,
 ) => {
   const template = preprocessTemplate(
     await file(req, `${contractName}.adoc`),
@@ -21,6 +21,8 @@ export const createHtmlContracts = async (
   const templateFunction = await file(req, `${contractName}.js`)
 
   const signingDates = getSigningDates(req)
+
+  const loadSheetDataCallback = (sheet) => loadSheetData(people, sheet)
 
   const htmlContracts = await Promise.all(
     people.map(async (person, i) => {
