@@ -15,7 +15,6 @@ const contract = async (req, res) => {
     req,
     people,
     contractName,
-    emsData,
   )
   return sendContracts(res, people, contracts)
 }

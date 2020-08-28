@@ -12,7 +12,7 @@ const sheetsApi = google.sheets({version: 'v4', auth})
  * Loads data from Google Sheets
  * Returns an array of objects (rows) indexed by column headers (first row)
  * Called from contract template
- * @param {*} people
+ * @param {*} people: queried EMS data
  * @param {spreadsheetId, sheetId, range, idSheetsColumn, idEMSField} sheet: Google sheet and range identifier, fields to join with EMS
  */
 export const loadSheetData = async (people, sheet) => {
