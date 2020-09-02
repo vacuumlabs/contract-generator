@@ -32,7 +32,7 @@ export const loadSheetData = async (person, sheet) => {
   )
   .find((row) => row[sheet.idSheetsColumn] === person[sheet.idEMSField])
 
-  if (!indexedRow) throw new Error(`Error joining column ${sheet.idSheetsColumn} of spreadsheet https://docs.google.com/spreadsheets/d/${sheet.spreadsheetId} with column ${sheet.idEMSField} of EMS. Check if ${sheet.idEMSField} of user ID ${person.id} exists in column ${sheet.idSheetsColumn}.`)
+  if (!indexedRow) throw new Error(`Error joining column ${sheet.idSheetsColumn} of spreadsheet https://docs.google.com/spreadsheets/d/${sheet.spreadsheetId} with column ${sheet.idEMSField} of EMS. Check if ${sheet.idEMSField} of user ID ${person.jiraId} exists in column ${sheet.idSheetsColumn}.`)
   
   return indexedRow
 }
