@@ -16,7 +16,6 @@ const contractPandadoc = async (req, res) => {
     req,
     people,
     contractName,
-    emsData,
   )
 
   const responses = await emailContracts(req, contracts, people, contractName)

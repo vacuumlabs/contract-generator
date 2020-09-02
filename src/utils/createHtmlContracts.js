@@ -12,7 +12,6 @@ export const createHtmlContracts = async (
   req,
   people,
   contractName,
-  emsData,
 ) => {
   const template = preprocessTemplate(
     await file(req, `${contractName}.adoc`),
@@ -22,18 +21,16 @@ export const createHtmlContracts = async (
 
   const signingDates = getSigningDates(req)
 
-  const loadSheetDataCallback = (sheet) => loadSheetData(people, sheet)
-
   const htmlContracts = await Promise.all(
     people.map(async (person, i) => {
       const query = {
         ...req.query,
         id: person.jiraId,
         signing_date: signingDates[i],
-        loadSheetDataCallback,
+        loadSheetData,
       }
 
-      const vars = await evalFunction(templateFunction)(query, emsData)
+      const vars = await evalFunction(templateFunction)(query, person)
 
       const adocVars = objToAdocVars(vars, person.jiraId)
 
