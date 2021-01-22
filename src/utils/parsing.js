@@ -13,7 +13,8 @@ export const getParams = (req) => {
   const params = req.url.split('/').slice(2)
   const contractName = params[0]
   const date = params[1].split('?')[0]
-  return {contractName, date}
+  const useEms = req.query.ems !== 'false'
+  return {contractName, date, useEms}
 }
 
 const validatePeople = (people, ids) => {
@@ -30,8 +31,13 @@ const validatePeople = (people, ids) => {
 export const getPeople = (req, emsData) => {
   const ids = req.query.id.split(',')
 
-  const people = ids.map((id) => emsData.find((e) => e.jiraId === id))
-  validatePeople(people, ids)
+  let people
+  if (emsData) {
+    people = ids.map((id) => emsData.find((e) => e.jiraId === id))
+    validatePeople(people, ids)
+  } else {
+    people = ids.map((id) => {return {jiraId: id}})
+  }
 
   return people
 }
