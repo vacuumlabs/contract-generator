@@ -2,12 +2,19 @@ import _ from 'lodash'
 import url from 'url'
 import c from '../config'
 
-export const getCssUrl = (req) =>
-  url.format({
+export const getCssUrls = (req, withLogo) => { 
+  const getCssUrl = (cssPath) => url.format({
     protocol: req.headers['x-forwarded-proto'] || c.isHttps ? 'https' : 'https',
     host: req.headers.host,
-    pathname: '/assets/contract.css',
+    pathname: cssPath,
   })
+
+  const contractCssUrl = getCssUrl('/assets/contract.css')
+  if (!withLogo) return [contractCssUrl]
+  
+  const logoCssUrl = getCssUrl('/assets/logo.css')
+  return [contractCssUrl, logoCssUrl]
+}
 
 export const getParams = (req) => {
   const params = req.url.split('/').slice(2)
