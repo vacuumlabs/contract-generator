@@ -52,6 +52,16 @@ export const getSigningDates = (req) => {
   return filledDates
 }
 
+export const getEmployers = (req) => {
+  const employerParam = req.query.employer
+  if (!employerParam) return []
+  
+  const employers = employerParam.split(',')
+  const filledEmployers = employers.map((employer) => employer || employers[0])
+
+  return filledEmployers
+}
+
 export const shouldRemovePandadocTags = (req) => {
   const endpoint = req.url.split('/')[1]
   return endpoint.match(/pandadoc/gi) ? false : true
