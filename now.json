@@ -19,6 +19,7 @@
   ],
   "routes": [
     {"src": "/assets/contract.css", "dest": "/assets/contract.css"},
+    {"src": "/assets/logo.css", "dest": "/assets/logo.css"},
     {"src": "/assets/app.css", "dest": "/assets/app.css"},
     {"src": "/favicon.ico", "dest": "/assets/favicon.ico"},
     {"src": "/assets/logo.png", "dest": "/assets/logo.png"},

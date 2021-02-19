@@ -1,6 +1,6 @@
 import chrome from 'chrome-aws-lambda'
 import puppeteer from 'puppeteer-core'
-import {getCssUrl} from './parsing'
+import {getCssUrls} from './parsing'
 import {createHtmlContracts} from './createHtmlContracts'
 
 const pdfOptions = {
@@ -15,17 +15,20 @@ const pdfOptions = {
     </div>`,
 }
 
-const addCss = (html, cssUrl) => {
+const addCss = (html, cssUrls) => {
   // place inside body to make sure puppeteer waits for the css (and its images) to load
   const regex = /<body.*>/
   const match = html.match(regex)
+  const links = cssUrls.map(
+    (cssUrl) => `\n<link rel="stylesheet" href="${cssUrl}">`
+  ).join('')
   return html.replace(
     regex,
-    `${match[0]}\n<link rel="stylesheet" href="${cssUrl}">`,
+    `${match[0]}${links}`,
   )
 }
 
-const htmlsToPdfs = async (htmls, cssUrl) => {
+const htmlsToPdfs = async (htmls, cssUrls) => {
   const browser = await puppeteer.launch({
     args: chrome.args,
     executablePath: await chrome.executablePath,
@@ -36,7 +39,7 @@ const htmlsToPdfs = async (htmls, cssUrl) => {
     htmls.map(async (html) => {
       const page = await browser.newPage()
 
-      const styledHtml = addCss(html, cssUrl)
+      const styledHtml = addCss(html, cssUrls)
       await page.setContent(styledHtml)
 
       return page.pdf(pdfOptions)
@@ -51,6 +54,7 @@ export const createPdfContracts = async (
   req,
   people,
   contractName,
+  withLogo,
 ) => {
   const htmls = await createHtmlContracts(
     req,
@@ -58,6 +62,6 @@ export const createPdfContracts = async (
     contractName,
   )
 
-  const cssUrl = getCssUrl(req)
-  return htmlsToPdfs(htmls, cssUrl)
+  const cssUrls = getCssUrls(req, withLogo)
+  return htmlsToPdfs(htmls, cssUrls)
 }

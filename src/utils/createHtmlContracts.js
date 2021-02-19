@@ -2,7 +2,7 @@ import _asciidoctor from 'asciidoctor.js'
 import {file} from '../api'
 import evalFunction from '../evalFunction'
 import {preprocessTemplate} from './preprocessTemplate'
-import {getSigningDates, shouldRemovePandadocTags} from './parsing'
+import {paramNames, getFilledParamValues, shouldRemovePandadocTags} from './parsing'
 import {objToAdocVars} from './objToAdocVars'
 import {loadSheetData} from './sheets'
 
@@ -19,7 +19,9 @@ export const createHtmlContracts = async (
   )
   const templateFunction = await file(req, `${contractName}.js`)
 
-  const signingDates = getSigningDates(req)
+  const signingDates = getFilledParamValues(req, paramNames.signingDate)
+  const startDates = getFilledParamValues(req, paramNames.startDate, true)
+  const employers = getFilledParamValues(req, paramNames.employer, true)
 
   const htmlContracts = await Promise.all(
     people.map(async (person, i) => {
@@ -27,6 +29,8 @@ export const createHtmlContracts = async (
         ...req.query,
         id: person.jiraId,
         signing_date: signingDates[i],
+        start_date: startDates[i],
+        employer_id: employers[i],
         loadSheetData,
       }
 

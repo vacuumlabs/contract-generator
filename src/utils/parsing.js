@@ -2,18 +2,32 @@ import _ from 'lodash'
 import url from 'url'
 import c from '../config'
 
-export const getCssUrl = (req) =>
-  url.format({
+export const paramNames = {
+  signingDate: 'signing_date',
+  startDate: 'start_date',
+  employer: 'employer',
+}
+
+export const getCssUrls = (req, withLogo) => { 
+  const getCssUrl = (cssPath) => url.format({
     protocol: req.headers['x-forwarded-proto'] || c.isHttps ? 'https' : 'https',
     host: req.headers.host,
-    pathname: '/assets/contract.css',
+    pathname: cssPath,
   })
+
+  const contractCssUrl = getCssUrl('/assets/contract.css')
+  if (!withLogo) return [contractCssUrl]
+  
+  const logoCssUrl = getCssUrl('/assets/logo.css')
+  return [contractCssUrl, logoCssUrl]
+}
 
 export const getParams = (req) => {
   const params = req.url.split('/').slice(2)
   const contractName = params[0]
   const date = params[1].split('?')[0]
-  return {contractName, date}
+  const useEms = req.query.ems !== 'false'
+  return {contractName, date, useEms}
 }
 
 const validatePeople = (people, ids) => {
@@ -30,20 +44,30 @@ const validatePeople = (people, ids) => {
 export const getPeople = (req, emsData) => {
   const ids = req.query.id.split(',')
 
-  const people = ids.map((id) => emsData.find((e) => e.jiraId === id))
-  validatePeople(people, ids)
+  let people
+  if (emsData) {
+    people = ids.map((id) => emsData.find((e) => e.jiraId === id))
+    validatePeople(people, ids)
+  } else {
+    people = ids.map((id) => {return {jiraId: id}})
+  }
 
   return people
 }
 
-export const getSigningDates = (req) => {
-  const dates = req.query.signing_date.split(',')
+export const getFilledParamValues = (req, paramName, isOptional) => {
+  const param = req.query[paramName]
+  if (!param) {
+    if (isOptional) return []
+    throw `${param} not specified.`
+  }
+  
+  const values = param.split(',')
+  if (!isOptional && values[0] === '') throw `${param} not specified.`
 
-  if (dates[0] === '') throw 'signing_date not specified.'
+  const filledValues = values.map((value) => value || values[0])
 
-  const filledDates = dates.map((date) => date || dates[0])
-
-  return filledDates
+  return filledValues
 }
 
 export const shouldRemovePandadocTags = (req) => {
