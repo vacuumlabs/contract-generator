@@ -1,6 +1,6 @@
 import FormData from 'form-data'
 import fs from 'fs'
-import {shouldEmailCompany} from './parsing'
+import {shouldEmailCompany, shouldEmailSpot} from './parsing'
 
 const CONTRACT_GENERATOR_FOLDER_ID = 'hrfX9jC8KrnvxjDDq67wAH'
 
@@ -16,6 +16,14 @@ const createDocumentData = (req, person) => ({
       first_name: 'Samuel',
       last_name: 'Hapák',
       role: 'company',
+    },
+    {
+      email: shouldEmailSpot(req)
+        ? 'michal@thespot.sk'
+        : 'dummy.nonexistent.adress@vacuumlabs.com',
+      first_name: 'Michal',
+      last_name: 'Haruštiak',
+      role: 'spot',
     },
     {
       email: person.email,
