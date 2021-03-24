@@ -7,17 +7,16 @@ import {createPdfContracts} from './utils/createPdfContracts'
 const contract = async (req, res) => {
   if (!(await authorize(req, res))) return
 
-  const {contractName, date, useEms} = getParams(req)
+  const {contractName, date, useEms, useLogo} = getParams(req)
   
   const emsData = useEms ? await loadEMS(date) : undefined
   const people = getPeople(req, emsData)
-  const withLogo = useEms
 
   const contracts = await createPdfContracts(
     req,
     people,
     contractName,
-    withLogo
+    useLogo
   )
   return sendContracts(res, people, contracts)
 }
