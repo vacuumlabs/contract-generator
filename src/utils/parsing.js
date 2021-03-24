@@ -79,6 +79,6 @@ export const shouldEmailCompany = (req) => {
   return !!req.query.sendEmailToCompany
 }
 
-export const shouldEmailSpot = (req) => {
-  return !!req.query.sendEmailToSpot
-}
+// export const shouldEmailSpot = (req) => {
+//   return !!req.query.sendEmailToSpot
+// }

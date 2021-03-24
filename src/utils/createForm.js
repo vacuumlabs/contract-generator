@@ -17,14 +17,14 @@ const createDocumentData = (req, person) => ({
       last_name: 'Hapák',
       role: 'company',
     },
-    {
-      email: shouldEmailSpot(req)
-        ? 'michal@thespot.sk'
-        : 'dummy.nonexistent.adress@vacuumlabs.com',
-      first_name: 'Michal',
-      last_name: 'Haruštiak',
-      role: 'spot',
-    },
+    // {
+    //   email: shouldEmailSpot(req)
+    //     ? 'michal@thespot.sk'
+    //     : 'dummy.nonexistent.adress@vacuumlabs.com',
+    //   first_name: 'Michal',
+    //   last_name: 'Haruštiak',
+    //   role: 'spot',
+    // },
     {
       email: person.email,
       first_name: person.firstName,
