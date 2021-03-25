@@ -12,7 +12,7 @@ const createDocumentData = (req, person) => ({
     {
       email: shouldEmailCompany(req)
         ? 'samuel@vacuumlabs.com'
-        : 'dummy.nonexistent.adress@vacuumlabs.com',
+        : 'dummy.nonexistent.adress.company@vacuumlabs.com',
       first_name: 'Samuel',
       last_name: 'Hapák',
       role: 'company',
@@ -20,7 +20,7 @@ const createDocumentData = (req, person) => ({
     {
       email: shouldEmailSpot(req)
         ? 'michal@thespot.sk'
-        : 'dummy.nonexistent.adress@vacuumlabs.com',
+        : 'dummy.nonexistent.adress.spot@vacuumlabs.com',
       first_name: 'Michal',
       last_name: 'Haruštiak',
       role: 'spot',
