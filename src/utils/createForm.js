@@ -9,14 +9,14 @@ const createDocumentData = (req, person) => ({
   folder_uuid: CONTRACT_GENERATOR_FOLDER_ID,
   recipients: [
     // creating a document fails, if any role has a missing recipient
-    {
+    ...[shouldEmailCompany(req) && {
       email: shouldEmailCompany(req)
-        ? 'samuel@vacuumlabs.com'
+        ?  'daniela.simeunovicova@vacuumlabs.com'
         : 'dummy.nonexistent.adress@vacuumlabs.com',
-      first_name: 'Samuel',
-      last_name: 'Hapák',
+      first_name: 'Daniela',
+      last_name: 'Simeunovičová',
       role: 'company',
-    },
+    }],
     {
       email: person.email,
       first_name: person.firstName,
