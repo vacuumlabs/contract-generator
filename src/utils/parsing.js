@@ -27,7 +27,9 @@ export const getParams = (req) => {
   const contractName = params[0]
   const date = params[1].split('?')[0]
   const useEms = req.query.ems !== 'false'
-  return {contractName, date, useEms}
+  // logo is by default excluded in non-EMS contracts
+  const useLogo = useEms ? req.query.logo !== 'false' : req.query.logo === 'true'
+  return {contractName, date, useEms, useLogo}
 }
 
 const validatePeople = (people, ids) => {
@@ -77,4 +79,8 @@ export const shouldRemovePandadocTags = (req) => {
 
 export const shouldEmailCompany = (req) => {
   return !!req.query.sendEmailToCompany
+}
+
+export const shouldEmailSpot = (req) => {
+  return !!req.query.sendEmailToSpot
 }
