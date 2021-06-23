@@ -11,10 +11,10 @@ const createDocumentData = (req, person) => ({
     // creating a document fails, if any role has a missing recipient
     {
       email: shouldEmailCompany(req)
-        ? 'samuel@vacuumlabs.com'
+        ?  'daniela.simeunovicova@vacuumlabs.com'
         : 'dummy.nonexistent.adress.company@vacuumlabs.com',
-      first_name: 'Samuel',
-      last_name: 'Hapák',
+      first_name: 'Daniela',
+      last_name: 'Simeunovičová',
       role: 'company',
     },
     {
