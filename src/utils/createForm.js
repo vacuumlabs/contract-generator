@@ -48,7 +48,7 @@ export const createForm = (req, pdf, person, contractName) => {
     'data',
     JSON.stringify({
       ...createDocumentData(req, person),
-      name: `${person.company.legalName} - ${contractName}`,
+      name: `${person.company.legalName} - ${contractName.name}`,
     }),
   )
 
