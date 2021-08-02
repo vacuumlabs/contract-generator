@@ -24,12 +24,13 @@ export const getCssUrls = (req, withLogo) => {
 
 export const getParams = (req) => {
   const params = req.url.split('/').slice(2)
-  const contractName = params[0]
-  const date = params[1].split('?')[0]
+  const contractFolder = params[0]
+  const contractName = params[1]
+  const date = params[2].split('?')[0]
   const useEms = req.query.ems !== 'false'
   // logo is by default excluded in non-EMS contracts
   const useLogo = useEms ? req.query.logo !== 'false' : req.query.logo === 'true'
-  return {contractName, date, useEms, useLogo}
+  return {contractFolder, contractName, date, useEms, useLogo}
 }
 
 const validatePeople = (people, ids) => {

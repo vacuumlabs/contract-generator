@@ -53,13 +53,15 @@ const htmlsToPdfs = async (htmls, cssUrls) => {
 export const createPdfContracts = async (
   req,
   people,
+  contractFolder,
   contractName,
   withLogo,
 ) => {
+  const contractPath = `${contractFolder}/${contractName}`
   const htmls = await createHtmlContracts(
     req,
     people,
-    contractName,
+    contractPath
   )
 
   const cssUrls = getCssUrls(req, withLogo)
