@@ -22,7 +22,7 @@ export const emailDocument = retryOnTooManyRequests((id, contractName) =>
   axios.post(
     `https://api.pandadoc.com/public/v1/documents/${id}/send`,
     {
-      subject: contractName.name,
+      subject: contractName,
     },
     config,
   ),

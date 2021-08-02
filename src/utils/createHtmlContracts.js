@@ -11,13 +11,13 @@ const asciidoctor = _asciidoctor()
 export const createHtmlContracts = async (
   req,
   people,
-  contractName,
+  contractPath,
 ) => {
   const template = preprocessTemplate(
-    await file(req, `${contractName.folder}/${contractName.name}.adoc`),
+    await file(req, `${contractPath}.adoc`),
     shouldRemovePandadocTags(req),
   )
-  const templateFunction = await file(req, `${contractName.folder}/${contractName.name}.js`)
+  const templateFunction = await file(req, `${contractPath}.js`)
 
   const signingDates = getFilledParamValues(req, paramNames.signingDate)
   const startDates = getFilledParamValues(req, paramNames.startDate, true)

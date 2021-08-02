@@ -8,7 +8,7 @@ import {sendEmailResponses} from './utils/sendEmailResponses'
 const contractPandadoc = async (req, res) => {
   if (!(await authorize(req, res))) return
 
-  const {contractName, date, useEms, useLogo} = getParams(req)
+  const {contractFolder, contractName, date, useEms, useLogo} = getParams(req)
   
   const emsData = useEms ? await loadEMS(date) : undefined
   const people = getPeople(req, emsData)
@@ -16,6 +16,7 @@ const contractPandadoc = async (req, res) => {
   const contracts = await createPdfContracts(
     req,
     people,
+    contractFolder,
     contractName,
     useLogo
   )
