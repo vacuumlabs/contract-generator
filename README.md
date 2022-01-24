@@ -86,4 +86,3 @@ If you want to set authorization for the first time or change the service accoun
 4. Share all Google Sheets with the service account (by clicking *Share* button in the Google Sheet).
 5. Convert the private API key into base64 (make sure that newlines are in the correct format).
 6. Set [environment variables](https://vercel.com/vacuumlabs/contract-generator/settings/environment-variables) GOOGLE_EMAIL to the service account email and GOOGLE_KEY to the API key in base64.
-
