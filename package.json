@@ -24,7 +24,7 @@
   },
   "peerDependencies": {},
   "devDependencies": {
-    "prettier": "prettier/prettier"
+    "prettier": "^2.7.1"
   },
   "engines": {
     "node": "14.x"
