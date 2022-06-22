@@ -60,3 +60,5 @@ typings/
 # Local ENV definitions
 .env
 .env.prod
+
+.vercel
