@@ -1,12 +1,13 @@
 import c from '../config'
-import {google} from 'googleapis'
+import {sheets} from '@googleapis/sheets'
+import {JWT} from "google-auth-library"
 
 // Authentication
 // Google Sheet must give read permission to the service account in c.google.email
 const scopes = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 const key = Buffer.from(c.google.key, 'base64').toString()
-const auth = new google.auth.JWT(c.google.email, null, key, scopes)
-const sheetsApi = google.sheets({version: 'v4', auth})
+const auth = new JWT(c.google.email, null, key, scopes)
+const sheetsApi = sheets({version: 'v4', auth})
 
 /**
  * Loads data from Google Sheets
