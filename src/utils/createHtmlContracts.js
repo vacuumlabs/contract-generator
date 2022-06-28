@@ -2,17 +2,17 @@ import _asciidoctor from 'asciidoctor.js'
 import {file} from '../api'
 import evalFunction from '../evalFunction'
 import {preprocessTemplate} from './preprocessTemplate'
-import {paramNames, getFilledParamValues, shouldRemovePandadocTags} from './parsing'
+import {
+  paramNames,
+  getFilledParamValues,
+  shouldRemovePandadocTags,
+} from './parsing'
 import {objToAdocVars} from './objToAdocVars'
 import {loadSheetData} from './sheets'
 
 const asciidoctor = _asciidoctor()
 
-export const createHtmlContracts = async (
-  req,
-  people,
-  contractPath,
-) => {
+export const createHtmlContracts = async (req, people, contractPath) => {
   const template = preprocessTemplate(
     await file(req, `${contractPath}.adoc`),
     shouldRemovePandadocTags(req),

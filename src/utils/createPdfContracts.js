@@ -19,13 +19,10 @@ const addCss = (html, cssUrls) => {
   // place inside body to make sure puppeteer waits for the css (and its images) to load
   const regex = /<body.*>/
   const match = html.match(regex)
-  const links = cssUrls.map(
-    (cssUrl) => `\n<link rel="stylesheet" href="${cssUrl}">`
-  ).join('')
-  return html.replace(
-    regex,
-    `${match[0]}${links}`,
-  )
+  const links = cssUrls
+    .map((cssUrl) => `\n<link rel="stylesheet" href="${cssUrl}">`)
+    .join('')
+  return html.replace(regex, `${match[0]}${links}`)
 }
 
 const htmlsToPdfs = async (htmls, cssUrls) => {
@@ -58,11 +55,7 @@ export const createPdfContracts = async (
   withLogo,
 ) => {
   const contractPath = `${contractFolder}/${contractName}`
-  const htmls = await createHtmlContracts(
-    req,
-    people,
-    contractPath
-  )
+  const htmls = await createHtmlContracts(req, people, contractPath)
 
   const cssUrls = getCssUrls(req, withLogo)
   return htmlsToPdfs(htmls, cssUrls)

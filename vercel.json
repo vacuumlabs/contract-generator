@@ -3,19 +3,19 @@
   "regions": ["bru"],
   "version": 2,
   "builds": [
-    {"src": "assets/*", "use": "@now/static"},
+    {"src": "assets/*", "use": "@vercel/static"},
     {
       "src": "src/contract.js",
-      "use": "@now/node",
+      "use": "@vercel/node",
       "config": {"maxLambdaSize": "40mb"}
     },
     {
       "src": "src/contractPandadoc.js",
-      "use": "@now/node",
+      "use": "@vercel/node",
       "config": {"maxLambdaSize": "40mb"}
     },
-    {"src": "src/auth/*.js", "use": "@now/node"},
-    {"src": "src/home.js", "use": "@now/node"}
+    {"src": "src/auth/*.js", "use": "@vercel/node"},
+    {"src": "src/home.js", "use": "@vercel/node"}
   ],
   "routes": [
     {"src": "/assets/contract.css", "dest": "/assets/contract.css"},
