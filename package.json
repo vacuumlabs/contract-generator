@@ -16,7 +16,7 @@
     "axios": "^0.21.2",
     "chrome-aws-lambda": "^10.1.0",
     "form-data": "^3.0.0",
-    "google-auth-library": "^8.0.3",
+    "google-auth-library": "^8.4.0",
     "jszip": "^3.10.1",
     "lodash": "^4.17.21",
     "puppeteer-core": "^10.1.0",
