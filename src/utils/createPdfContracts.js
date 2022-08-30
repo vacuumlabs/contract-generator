@@ -7,6 +7,7 @@ const pdfOptions = {
   format: 'A4',
   printBackground: true,
   displayHeaderFooter: true,
+  timeout: 0,
   headerTemplate: '<div/>',
   footerTemplate: `
     <div class='grow'></div>

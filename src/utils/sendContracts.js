@@ -1,21 +1,32 @@
-import archiver from 'archiver'
+import JSZip from 'jszip'
 
 const createZip = async (contracts, people) => {
-  const zip = archiver('zip', {
-    zlib: {level: 9},
+  const zip = new JSZip()
+  const peopleIds = {}
+  for (let i = 0; i < contracts.length; i++) {
+    const contract = contracts[i]
+    const person = people[i]
+    const fileName = `${person.jiraId}.pdf`
+    if (zip.file(fileName)) {
+      // check if the jiraid is in peopleIds, if it is increment the counter
+      if (peopleIds[person.jiraId]) {
+        peopleIds[person.jiraId]++
+      } else {
+        peopleIds[person.jiraId] = 1
+      }
+      // add the file to the zip with a new name
+      zip.file(`${person.jiraId}(${peopleIds[person.jiraId]}).pdf`, contract)
+    } else {
+      zip.file(fileName, contract)
+    }
+  }
+  return zip.generateAsync({
+    type: 'nodebuffer',
+    compression: 'DEFLATE',
+    compressionOptions: {
+      level: 9,
+    },
   })
-
-  contracts.forEach((contract, i) => {
-    zip.append(contract, {name: `${people[i].jiraId}.pdf`})
-  })
-
-  const finishZipping = new Promise((res, rej) =>
-    zip.on('finish', () => res(1)),
-  )
-  zip.finalize()
-  await finishZipping
-
-  return zip.read()
 }
 
 const sendSingleContract = (res, contract) => {
