@@ -94,8 +94,12 @@ export const shouldRemovePandadocTags = (req) => {
   return endpoint.match(/pandadoc/gi) ? false : true
 }
 
-export const shouldEmailCompany = (req) => {
-  return req.query.sendEmailToCompany === 'true'
+export const shouldEmailMiro = (req) => {
+  return req.query.sendEmailToMiro === 'true'
+}
+
+export const shouldEmailSafia = (req) => {
+  return req.query.sendEmailToSafia === 'true'
 }
 
 export const shouldEmailSpot = (req) => {
