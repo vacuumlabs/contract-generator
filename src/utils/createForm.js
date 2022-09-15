@@ -1,22 +1,40 @@
 import FormData from 'form-data'
 import fs from 'fs'
-import {shouldEmailCompany, shouldEmailSpot} from './parsing'
+import {shouldEmailMiro, shouldEmailSpot, shouldEmailSafia} from './parsing'
 
 const CONTRACT_GENERATOR_FOLDER_ID = 'hrfX9jC8KrnvxjDDq67wAH'
+
+const emailCompany = (req) => {
+  if (shouldEmailMiro(req)) {
+    return {
+      email: 'miro.skovajsa@vacuumlabs.com',
+      first_name: 'Miroslav',
+      last_name: 'Skovajsa',
+      role: 'company',
+    }
+  }
+  if (shouldEmailSafia(req)) {
+    return {
+      email: 'safia.bagin@vacuumlabs.com',
+      first_name: 'Safia',
+      last_name: 'Bagin',
+      role: 'company',
+    }
+  }
+  return {
+    email: 'dummy.nonexistent.adress.company@vacuumlabs.com',
+    first_name: 'Dummy',
+    last_name: 'Nonexistent',
+    role: 'company',
+  }
+}
 
 const createDocumentData = (req, person) => ({
   tags: ['contract-generator'],
   folder_uuid: CONTRACT_GENERATOR_FOLDER_ID,
   recipients: [
     // creating a document fails, if any role has a missing recipient
-    {
-      email: shouldEmailCompany(req)
-        ? 'miro.skovajsa@vacuumlabs.com'
-        : 'dummy.nonexistent.adress.company@vacuumlabs.com',
-      first_name: 'Miroslav',
-      last_name: 'Skovajsa',
-      role: 'company',
-    },
+    emailCompany(req),
     {
       email: shouldEmailSpot(req)
         ? 'michal@thespot.sk'
