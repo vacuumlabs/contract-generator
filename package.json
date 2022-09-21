@@ -11,7 +11,7 @@
     "deploy-now": "now `sed 's/#.*$//;/^\\s*$/d;s/^/-e /' .env.prod`"
   },
   "dependencies": {
-    "@googleapis/sheets": "^3.0.1",
+    "@googleapis/sheets": "^3.0.2",
     "asciidoctor.js": "^1.5.7-rc.1",
     "axios": "^0.21.2",
     "chrome-aws-lambda": "^10.1.0",
