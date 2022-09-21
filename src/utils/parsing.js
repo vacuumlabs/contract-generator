@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import url from 'url'
 import c from '../config'
+import { getName } from 'country-list'
 
 export const paramNames = {
   signingDate: 'signing_date',
@@ -57,6 +58,10 @@ export const getPeople = (req, emsData) => {
   if (emsData) {
     people = ids.map((id) => emsData.find((e) => e.jiraId === id))
     validatePeople(people, ids)
+    people = people.map((person) => ({
+      ...person,
+      country: getName(person.country),
+    }))
   } else {
     people = ids.map((id) => {
       return {jiraId: id}
