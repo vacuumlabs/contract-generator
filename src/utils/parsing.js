@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import url from 'url'
 import c from '../config'
-import { getName } from 'country-list'
+import {getName} from 'country-list'
 
 export const paramNames = {
   signingDate: 'signing_date',

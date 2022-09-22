@@ -1,6 +1,6 @@
 import c from '../config'
 import {sheets} from '@googleapis/sheets'
-import {JWT} from "google-auth-library"
+import {JWT} from 'google-auth-library'
 
 // Authentication
 // Google Sheet must give read permission to the service account in c.google.email
