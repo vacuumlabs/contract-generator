@@ -32,7 +32,7 @@ const createDocumentData = (req, person) => ({
       role: 'user',
     },
   ],
-  parse_form_fields: false,
+  parse_form_fields: true,
 })
 
 export const createForm = (req, pdf, person, contractName) => {
