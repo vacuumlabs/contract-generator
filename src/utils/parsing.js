@@ -92,9 +92,9 @@ export const shouldRemovePandadocTags = (req) => {
 }
 
 export const shouldEmailCompany = (req) => {
-  return !!req.query.sendEmailToCompany
+  return req.query.sendEmailToCompany === 'true'
 }
 
 export const shouldEmailSpot = (req) => {
-  return !!req.query.sendEmailToSpot
+  return req.query.sendEmailToSpot === 'true'
 }
