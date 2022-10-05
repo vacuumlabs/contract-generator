@@ -58,10 +58,13 @@ export const getPeople = (req, emsData) => {
   if (emsData) {
     people = ids.map((id) => emsData.find((e) => e.jiraId === id))
     validatePeople(people, ids)
-    people = people.map((person) => ({
-      ...person,
-      country: getName(person.country),
-    }))
+    people = people.map((person) => {
+      person.country = getName(person.country)
+      if (person.company) {
+        person.company.country = getName(person.company.country)
+      }
+      return person
+    })
   } else {
     people = ids.map((id) => {
       return {jiraId: id}
