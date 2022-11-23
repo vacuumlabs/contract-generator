@@ -5,11 +5,6 @@
   "repository": "git@github.com:vacuumlabs/contract-generator.git",
   "author": "Samuel Hapák <samuel.hapak@gmail.com>",
   "license": "Unlicense",
-  "scripts": {
-    "start": "now dev",
-    "prettier": "prettier --write src/**/*.js",
-    "deploy-now": "now `sed 's/#.*$//;/^\\s*$/d;s/^/-e /' .env.prod`"
-  },
   "dependencies": {
     "@googleapis/sheets": "^3.0.1",
     "asciidoctor.js": "^1.5.7-rc.1",
@@ -28,7 +23,7 @@
     "prettier": "^2.7.1"
   },
   "engines": {
-    "node": "14.x"
+    "node": "16.x"
   },
   "resolutions": {
     "node-fetch": "2.6.7"
