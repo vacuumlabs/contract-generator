@@ -15,7 +15,7 @@
     "asciidoctor.js": "^1.5.7-rc.1",
     "axios": "^0.21.2",
     "chrome-aws-lambda": "^10.1.0",
-    "country-list": "^2.2.0",
+    "country-list": "^2.3.0",
     "form-data": "^3.0.0",
     "google-auth-library": "^8.0.3",
     "jszip": "^3.10.1",
