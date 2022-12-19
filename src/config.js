@@ -8,6 +8,7 @@ export default transenv()(({str, bool}) => {
     ssoUrl: str('VL_SSO_URL'),
     ssoKey: str('VL_SSO_KEY'),
     ghApiUrl: `${str('VL_SSO_URL')}/api/github`,
+    emsHost: str('EMS_HOST'),
     emsKey: str('EMS_KEY'),
     pandadocKey: str('PANDADOC_KEY'),
 
