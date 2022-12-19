@@ -1,4 +1,3 @@
-import chrome from 'chrome-aws-lambda'
 import puppeteer from 'puppeteer-core'
 import {getCssUrls} from './parsing'
 import {createHtmlContracts} from './createHtmlContracts'
@@ -27,11 +26,7 @@ const addCss = (html, cssUrls) => {
 }
 
 const htmlsToPdfs = async (htmls, cssUrls) => {
-  const browser = await puppeteer.launch({
-    args: chrome.args,
-    executablePath: await chrome.executablePath,
-    headless: chrome.headless,
-  })
+  const browser = await puppeteer.launch()
 
   const pdfs = await Promise.all(
     htmls.map(async (html) => {
