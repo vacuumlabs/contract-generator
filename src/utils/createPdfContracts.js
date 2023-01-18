@@ -26,7 +26,7 @@ const addCss = (html, cssUrls) => {
 }
 
 const htmlsToPdfs = async (htmls, cssUrls) => {
-  const browser = await puppeteer.launch()
+  const browser = await puppeteer.launch({args: ['--no-sandbox']})
 
   const pdfs = await Promise.all(
     htmls.map(async (html) => {
