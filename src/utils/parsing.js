@@ -13,15 +13,15 @@ export const getCssUrls = (req, withLogo) => {
   const getCssUrl = (cssPath) =>
     url.format({
       protocol:
-        req.headers['x-forwarded-proto'] || c.isHttps ? 'https' : 'https',
+        req.headers['x-forwarded-proto'] || c.isHttps ? 'https' : 'http',
       host: req.headers.host,
       pathname: cssPath,
     })
 
-  const contractCssUrl = getCssUrl('/assets/contract.css')
+  const contractCssUrl = getCssUrl('/contract.css')
   if (!withLogo) return [contractCssUrl]
 
-  const logoCssUrl = getCssUrl('/assets/logo.css')
+  const logoCssUrl = getCssUrl('/logo.css')
   return [contractCssUrl, logoCssUrl]
 }
 
