@@ -1,6 +1,7 @@
 import puppeteer from 'puppeteer-core'
 import {getCssUrls} from './parsing'
 import {createHtmlContracts} from './createHtmlContracts'
+import axios from 'axios'
 
 const pdfOptions = {
   format: 'A4',
@@ -15,25 +16,20 @@ const pdfOptions = {
     </div>`,
 }
 
-const addCss = (html, cssUrls) => {
-  // place inside body to make sure puppeteer waits for the css (and its images) to load
-  const regex = /<body.*>/
-  const match = html.match(regex)
-  const links = cssUrls
-    .map((cssUrl) => `\n<link rel="stylesheet" href="${cssUrl}">`)
-    .join('')
-  return html.replace(regex, `${match[0]}${links}`)
-}
-
 const htmlsToPdfs = async (htmls, cssUrls) => {
   const browser = await puppeteer.launch({args: ['--no-sandbox']})
-
   const pdfs = await Promise.all(
     htmls.map(async (html) => {
       const page = await browser.newPage()
 
-      const styledHtml = addCss(html, cssUrls)
-      await page.setContent(styledHtml)
+      await page.setContent(html)
+
+      await Promise.all(
+        cssUrls.map(async (cssUrl) => {
+          const css = (await axios.get(cssUrl)).data
+          await page.addStyleTag({content: css})
+        }),
+      )
 
       return page.pdf(pdfOptions)
     }),

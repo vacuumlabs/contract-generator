@@ -15,7 +15,7 @@ app.set('trust proxy', true)
 
 app.use(cookieParser())
 app.use(helmet(helmetOptions))
-
+app.use('/assets', express.static('assets'))
 app.disable('etag')
 
 app.get('/', home)
