@@ -13,7 +13,7 @@ export const getCssUrls = (req, withLogo) => {
   const getCssUrl = (cssPath) =>
     url.format({
       protocol:
-        req.headers['x-forwarded-proto'] || c.isHttps ? 'https' : 'https',
+        req.headers['x-forwarded-proto'] || c.isHttps ? 'https' : 'http',
       host: req.headers.host,
       pathname: cssPath,
     })
