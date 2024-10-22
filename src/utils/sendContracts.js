@@ -6,16 +6,16 @@ const createZip = async (contracts, people) => {
   for (let i = 0; i < contracts.length; i++) {
     const contract = contracts[i]
     const person = people[i]
-    const fileName = `${person.jiraId}.pdf`
+    const fileName = `${person.vacuumId}.pdf`
     if (zip.file(fileName)) {
-      // check if the jiraid is in peopleIds, if it is increment the counter
-      if (peopleIds[person.jiraId]) {
-        peopleIds[person.jiraId]++
+      // check if the vacuumId is in peopleIds, if it is increment the counter
+      if (peopleIds[person.vacuumId]) {
+        peopleIds[person.vacuumId]++
       } else {
-        peopleIds[person.jiraId] = 1
+        peopleIds[person.vacuumId] = 1
       }
       // add the file to the zip with a new name
-      zip.file(`${person.jiraId}(${peopleIds[person.jiraId]}).pdf`, contract)
+      zip.file(`${person.vacuumId}(${peopleIds[person.vacuumId]}).pdf`, contract)
     } else {
       zip.file(fileName, contract)
     }

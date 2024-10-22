@@ -56,7 +56,7 @@ const createDocumentData = (req, person) => ({
 export const createForm = (req, pdf, person, contractName) => {
   // I could not find a better way, using a buffer or a stream directly did not work
   const fileName = `/tmp/contract-${
-    person.jiraId
+    person.vacuumId
   }-${new Date().toISOString()}.pdf`
   fs.writeFileSync(fileName, pdf)
 

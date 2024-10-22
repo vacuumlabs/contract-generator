@@ -27,7 +27,7 @@ export const createHtmlContracts = async (req, people, contractPath) => {
     people.map(async (person, i) => {
       const query = {
         ...req.query,
-        id: person.jiraId,
+        id: person.vacuumId,
         signing_date: signingDates[i],
         start_date: startDates[i],
         employer_id: employers[i],
@@ -36,7 +36,7 @@ export const createHtmlContracts = async (req, people, contractPath) => {
 
       const vars = await evalFunction(templateFunction)(query, person)
 
-      const adocVars = objToAdocVars(vars, person.jiraId)
+      const adocVars = objToAdocVars(vars, person.vacuumId)
 
       return asciidoctor.convert(`${adocVars}\n${template}`, {
         header_footer: true,
