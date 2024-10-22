@@ -1,0 +1,32 @@
+name: CI/CD to production
+
+on:
+  workflow_dispatch:
+
+permissions:
+  pull-requests: read
+  contents: read
+  id-token: write
+
+jobs:
+  build_and_push_docker_image:
+    uses: vacuumlabs/internalapps-cicd/.github/workflows/build-docker.yml@master
+    with:
+      PROJECT_ID_ARTIFACT_REGISTRY: vl-hr-common/vl-contractapp-prod-repository
+      REGION: europe-west1
+      SERVICE: contractapp-prod
+    secrets:
+      WIF_PROVIDER: ${{ secrets.WIF_PROVIDER_PROD }}
+      WIF_SERVICE_ACCOUNT: ${{ secrets.WIF_SERVICE_ACCOUNT_PROD }}
+
+  deploy_to_prod:
+    needs: build_and_push_docker_image
+    uses: vacuumlabs/internalapps-cicd/.github/workflows/deploy-cloudrun.yml@master
+    with:
+      PROJECT_ID_ARTIFACT_REGISTRY: vl-hr-common/vl-contractapp-prod-repository
+      SERVICE: contractapp-prod
+      PROJECT_ID_CLOUD_RUN: vl-hr-contractapp-prod
+      REGION: europe-west1
+    secrets:
+      WIF_PROVIDER: ${{ secrets.WIF_PROVIDER_PROD }}
+      WIF_SERVICE_ACCOUNT: ${{ secrets.WIF_SERVICE_ACCOUNT_PROD }}

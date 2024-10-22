@@ -5,6 +5,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Compiled files
+dist
+
 # Runtime data
 pids
 *.pid
@@ -60,5 +63,3 @@ typings/
 # Local ENV definitions
 .env
 .env.prod
-
-.vercel

@@ -30,7 +30,7 @@ export const file = async (req, filename) => {
 export const loadEMS = async (date) => {
   const emsData = (
     await axios.get(
-      `https://ems.vacuumlabs.com/api/monthlyExport?date=${date}`,
+      `${c.emsHost}/api/monthlyExport?date=${date}`,
       {
         headers: { 'api-key': c.emsKey },
       }
